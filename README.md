@@ -58,95 +58,21 @@ Date-Mate-AI 是一个全栈约会应用，专为忙碌的IT专业人士设计�
 - 🔒 **隐私保护** - 严格的数据保护措施
 - 📱 **响应式设计** - 完美适配各种设备
 
-## 项目结构# date-mate-ai
-创建一款面向忙碌专业人士的高质量约会应用，通过AI辅助功能提升沟通效率和质量，帮助用户在有限的社交时间内建立更有意义的连接，最终找到真正合适的伴侣
-
-date-mate-ai/
-├── date-mate-client/ # 前端项目
-│ ├── public/ # 静态资源
-│ ├── src/ # 源代码
-│ │ ├── assets/ # 图片、字体等资源
-│ │ ├── components/ # React组件
-│ │ ├── hooks/ # 自定义Hooks
-│ │ ├── pages/ # 页面组件
-│ │ ├── redux/ # Redux状态管理
-│ │ ├── services/ # API服务
-│ │ ├── styles/ # 全局样式
-│ │ ├── utils/ # 工具函数
-│ │ ├── App.jsx # 应用入口
-│ │ └── main.jsx # 渲染入口
-│ ├── .eslintrc.js # ESLint配置
-│ ├── package.json # 依赖管理
-│ └── vite.config.js # Vite配置
-│
-├── date-mate-service/ # 后端项目
-│ ├── src/
-│ │ ├── main/
-│ │ │ ├── java/com/datemate/
-│ │ │ │ ├── config/ # 配置类
-│ │ │ │ ├── controller/ # API控制器
-│ │ │ │ ├── dto/ # 数据传输对象
-│ │ │ │ ├── exception/ # 异常处理
-│ │ │ │ ├── model/ # 数据模型
-│ │ │ │ ├── repository/ # 数据访问层
-│ │ │ │ ├── security/ # 安全配置
-│ │ │ │ ├── service/ # 业务逻辑层
-│ │ │ │ └── util/ # 工具类
-│ │ │ └── resources/ # 配置文件
-│ │ └── test/ # 测试代码
-│ ├── pom.xml # Maven配置
-│ └── Dockerfile # Docker配置
-│
-├── .gitignore # Git忽略文件
-├── docker-compose.yml # Docker Compose配置
-└── README.md # 项目说明
-
-## 安装与运行
-
-### 前提条件
-- Node.js 16+
-- Java 17+
-- Docker & Docker Compose
-- PostgreSQL 14+
-- Redis 6+
-
-### 前端开发环境
-```bash
-# 进入前端目录
-cd date-mate-client
-
-# 安装依赖
-npm install
-
-# 启动开发服务器
-npm run dev
-
-### 后端开发环境
-```bash
-Shell
-# 进入后端目录
-cd date-mate-service
-
-# 编译项目
-mvn clean install
-
-# 运行应用
-mvn spring-boot:run
-使用Docker Compose启动完整环境
-*.bash
-Shell
-docker-compose up -d
 
 ### 贡献指南
-Fork 本仓库
-创建功能分支 (git checkout -b feature/amazing-feature)
-提交更改 (git commit -m 'Add some amazing feature')
-推送到分支 (git push origin feature/amazing-feature)
-创建 Pull Request
-许可证
+
+1. Fork 本仓库
+2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
+3. 提交更改 (`git commit -m 'Add some amazing feature'`)
+4. 推送到分支 (`git push origin feature/amazing-feature`)
+5. 创建 Pull Request
+
+### 许可证
+
 本项目采用 MIT 许可证 - 详情请参阅 LICENSE 文件
 
-联系方式
-项目维护者 - @Guo-sen-ming
+### 联系方式
 
-项目链接: https://github.com/Guo-sen-ming/date-mate-ai
+项目维护者 - [@Guo-sen-ming](https://github.com/Guo-sen-ming)
+
+项目链接: [https://github.com/Guo-sen-ming/date-mate-ai](https://github.com/Guo-sen-ming/date-mate-ai)
