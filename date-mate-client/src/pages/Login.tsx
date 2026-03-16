@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { Button, TextField, Text, Callout } from '@radix-ui/themes'
-import { ExclamationTriangleIcon, EyeOpenIcon, EyeClosedIcon } from '@radix-ui/react-icons'
+import { Button, TextField } from '@radix-ui/themes'
+import { EyeOpenIcon, EyeClosedIcon } from '@radix-ui/react-icons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { login } from '@/store/slices/authSlice'
+import { useToast } from '@/components/ToastContext'
+import styles from './Login.module.scss'
 
 interface LoginFormData {
   email: string
@@ -14,7 +16,8 @@ interface LoginFormData {
 export default function LoginPage() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { loading, error } = useAppSelector((state) => state.auth)
+  const { loading } = useAppSelector((state) => state.auth)
+  const { showToast } = useToast()
   const [showPassword, setShowPassword] = useState(false)
 
   const {
@@ -25,36 +28,25 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     const result = await dispatch(login(data))
+    console.log(login(data), 'xx')
     if (login.fulfilled.match(result)) {
       navigate('/')
+    } else if (login.rejected.match(result)) {
+      showToast((result.payload as string) || 'Login failed', 'error')
     }
   }
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <Text size="6" weight="bold" as="p" className="mb-2">
-          Welcome Back
-        </Text>
-        <Text size="2" color="gray" as="p">
-          Sign in to your account
-        </Text>
+    <div className={styles.card}>
+      <div className={styles.header}>
+        <div className={styles.emoji}>💕</div>
+        <h2 className={styles.title}>Welcome Back</h2>
+        <p className={styles.subtitle}>Sign in to your account</p>
       </div>
 
-      {error && (
-        <Callout.Root color="red" size="1">
-          <Callout.Icon>
-            <ExclamationTriangleIcon />
-          </Callout.Icon>
-          <Callout.Text>{error}</Callout.Text>
-        </Callout.Root>
-      )}
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="space-y-1">
-          <Text as="label" size="2" weight="medium" htmlFor="email">
-            Email
-          </Text>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className={styles.fieldGroup}>
+          <label htmlFor="email" className={styles.label}>Email</label>
           <TextField.Root
             id="email"
             type="email"
@@ -69,17 +61,13 @@ export default function LoginPage() {
             })}
           />
           {errors.email && (
-            <Text size="1" color="red">
-              {errors.email.message}
-            </Text>
+            <p className={styles.fieldError}>{errors.email.message}</p>
           )}
         </div>
 
-        <div className="space-y-1">
-          <Text as="label" size="2" weight="medium" htmlFor="password">
-            Password
-          </Text>
-          <div className="relative">
+        <div className={styles.fieldGroupLast}>
+          <label htmlFor="password" className={styles.label}>Password</label>
+          <div className={styles.passwordWrapper}>
             <TextField.Root
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -96,20 +84,18 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer"
+              className={styles.togglePassword}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? (
-                <EyeClosedIcon className="w-4 h-4" />
+                <EyeClosedIcon width={16} height={16} />
               ) : (
-                <EyeOpenIcon className="w-4 h-4" />
+                <EyeOpenIcon width={16} height={16} />
               )}
             </button>
           </div>
           {errors.password && (
-            <Text size="1" color="red">
-              {errors.password.message}
-            </Text>
+            <p className={styles.fieldError}>{errors.password.message}</p>
           )}
         </div>
 
@@ -117,19 +103,17 @@ export default function LoginPage() {
           type="submit"
           size="3"
           color="ruby"
-          className="w-full cursor-pointer"
+          className={styles.submitBtn}
           loading={loading}
         >
           Sign In
         </Button>
       </form>
 
-      <Text size="2" color="gray" as="p" align="center">
+      <p className={styles.footer}>
         Don&apos;t have an account?{' '}
-        <Link to="/register" className="text-rose-600 hover:underline">
-          Sign up
-        </Link>
-      </Text>
+        <Link to="/register" className={styles.footerLink}>Sign up</Link>
+      </p>
     </div>
   )
 }

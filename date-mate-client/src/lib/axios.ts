@@ -24,7 +24,9 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Skip auto-redirect for auth endpoints (login/register handle their own errors)
+    const requestUrl = error.config?.url || ''
+    if (error.response?.status === 401 && !requestUrl.startsWith('/auth')) {
       localStorage.removeItem('token')
       window.location.href = '/login'
     }

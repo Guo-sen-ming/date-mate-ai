@@ -1,0 +1,25 @@
+@use '../styles/variables' as *;
+
+.wrapper {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, $color-bg-gradient-start, $color-bg-gradient-end);
+  padding: 0 $spacing-md;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: $color-primary;
+  margin-bottom: $spacing-lg;
+}
+
+.container {
+  width: 100%;
+  max-width: 380px;
+}

@@ -1,0 +1,39 @@
+// Color palette
+$color-primary: #e11d48;
+$color-primary-light: #fb7185;
+$color-primary-dark: #be123c;
+
+$color-bg: #ffffff;
+$color-bg-secondary: #f9fafb;
+$color-bg-gradient-start: #fff1f2;
+$color-bg-gradient-end: #f3f4f6;
+
+$color-text: #111827;
+$color-text-secondary: #6b7280;
+$color-text-muted: #9ca3af;
+
+$color-border: #e5e7eb;
+$color-error: #ef4444;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 40px;
+$spacing-3xl: 48px;
+
+// Border radius
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+
+// Breakpoints
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+
+// Shadows
+$shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);

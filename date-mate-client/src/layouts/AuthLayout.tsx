@@ -1,9 +1,13 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, Link } from 'react-router-dom'
+import styles from './AuthLayout.module.scss'
 
 export default function AuthLayout() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
-      <div className="w-full max-w-sm">
+    <div className={styles.wrapper}>
+      <Link to="/" className={styles.logo}>
+        Date Mate AI
+      </Link>
+      <div className={styles.container}>
         <Outlet />
       </div>
     </div>

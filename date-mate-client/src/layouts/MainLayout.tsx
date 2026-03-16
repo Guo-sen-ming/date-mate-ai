@@ -1,11 +1,12 @@
 import { Outlet } from 'react-router-dom'
 import Header from '@/components/Header'
+import styles from './MainLayout.module.scss'
 
 export default function MainLayout() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className={styles.wrapper}>
       <Header />
-      <main className="flex-1">
+      <main className={styles.main}>
         <Outlet />
       </main>
     </div>

@@ -1,0 +1,97 @@
+@use '../styles/variables' as *;
+
+.card {
+  background: $color-bg;
+  border-radius: $radius-lg;
+  padding: $spacing-lg $spacing-lg $spacing-xl;
+  box-shadow: $shadow-card;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: $spacing-lg;
+}
+
+.emoji {
+  font-size: 32px;
+  margin-bottom: $spacing-xs;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: $spacing-xs;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: $color-text-secondary;
+}
+
+.fieldGroup {
+  margin-bottom: $spacing-md;
+  position: relative;
+  padding-bottom: 18px;
+}
+
+.fieldGroupLast {
+  margin-bottom: $spacing-lg;
+  position: relative;
+  padding-bottom: 18px;
+}
+
+.label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.fieldError {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  font-size: 12px;
+  color: $color-error;
+}
+
+.passwordWrapper {
+  position: relative;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text-muted;
+  padding: $spacing-xs;
+
+  &:hover {
+    color: $color-text-secondary;
+  }
+}
+
+.submitBtn {
+  width: 100%;
+  cursor: pointer;
+}
+
+.footer {
+  text-align: center;
+  font-size: 13px;
+  color: $color-text-secondary;
+  margin-top: $spacing-lg;
+}
+
+.footerLink {
+  color: $color-primary;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

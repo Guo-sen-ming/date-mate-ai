@@ -1,0 +1,177 @@
+@use '../styles/variables' as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid $color-border;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: $color-primary;
+}
+
+.desktopNav {
+  display: none;
+  align-items: center;
+  gap: 20px;
+
+  @media (min-width: $breakpoint-md) {
+    display: flex;
+  }
+}
+
+.navLink {
+  font-size: 14px;
+  color: $color-text-secondary;
+  transition: color 0.2s;
+
+  &:hover {
+    color: $color-primary;
+  }
+}
+
+.logoutBtn {
+  font-size: 14px;
+  color: $color-text-muted;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+
+  &:hover {
+    color: $color-primary;
+  }
+}
+
+.signupLink {
+  font-size: 14px;
+  color: #fff;
+  background: $color-primary;
+  padding: 8px 16px;
+  border-radius: $radius-sm;
+  transition: background 0.2s;
+
+  &:hover {
+    background: $color-primary-dark;
+  }
+}
+
+.menuBtn {
+  display: flex;
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text;
+
+  @media (min-width: $breakpoint-md) {
+    display: none;
+  }
+}
+
+.closeBtn {
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text;
+}
+
+.closeBtnWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: $spacing-lg;
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.mobileLink {
+  font-size: 16px;
+  color: $color-text;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid $color-border;
+  transition: color 0.2s;
+
+  &:hover {
+    color: $color-primary;
+  }
+}
+
+.mobileLogout {
+  font-size: 16px;
+  color: $color-text-muted;
+  padding: $spacing-sm 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s;
+
+  &:hover {
+    color: $color-primary;
+  }
+}
+
+.mobileSignup {
+  display: block;
+  text-align: center;
+  color: #fff;
+  background: $color-primary;
+  padding: 12px;
+  border-radius: $radius-sm;
+  transition: background 0.2s;
+
+  &:hover {
+    background: $color-primary-dark;
+  }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 50;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 260px;
+  background: #fff;
+  z-index: 50;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+  padding: $spacing-lg;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

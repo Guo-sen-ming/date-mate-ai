@@ -1,0 +1,18 @@
+@use '../styles/variables' as *;
+
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: $spacing-lg $spacing-md;
+}
+
+.pageTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: $spacing-md;
+}
+
+.placeholder {
+  font-size: 14px;
+  color: $color-text-secondary;
+}
