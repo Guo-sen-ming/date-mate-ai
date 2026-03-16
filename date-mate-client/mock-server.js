@@ -1,0 +1,158 @@
+import { createServer } from 'node:http'
+import { readFileSync, writeFileSync } from 'node:fs'
+import { randomUUID } from 'node:crypto'
+
+const PORT = 3001
+const DB_PATH = './db.json'
+
+function readDb() {
+  return JSON.parse(readFileSync(DB_PATH, 'utf-8'))
+}
+
+function writeDb(data) {
+  writeFileSync(DB_PATH, JSON.stringify(data, null, 2))
+}
+
+function jsonResponse(res, status, data) {
+  res.writeHead(status, {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  })
+  res.end(JSON.stringify(data))
+}
+
+function parseBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = ''
+    req.on('data', (chunk) => (body += chunk))
+    req.on('end', () => {
+      try {
+        resolve(body ? JSON.parse(body) : {})
+      } catch {
+        reject(new Error('Invalid JSON'))
+      }
+    })
+  })
+}
+
+// Generate a fake JWT token
+function generateToken(userId) {
+  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url')
+  const payload = Buffer.from(
+    JSON.stringify({ sub: userId, iat: Date.now(), exp: Date.now() + 86400000 }),
+  ).toString('base64url')
+  const signature = Buffer.from(`fake-signature-${userId}`).toString('base64url')
+  return `${header}.${payload}.${signature}`
+}
+
+// Extract user id from fake token
+function getUserIdFromToken(token) {
+  try {
+    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString())
+    return payload.sub
+  } catch {
+    return null
+  }
+}
+
+const server = createServer(async (req, res) => {
+  const url = new URL(req.url, `http://localhost:${PORT}`)
+  const path = url.pathname
+  const method = req.method
+
+  // Handle CORS preflight
+  if (method === 'OPTIONS') {
+    return jsonResponse(res, 204, null)
+  }
+
+  try {
+    // POST /auth/login
+    if (method === 'POST' && path === '/auth/login') {
+      const { email, password } = await parseBody(req)
+      const db = readDb()
+      const user = db.users.find((u) => u.email === email && u.password === password)
+
+      if (!user) {
+        return jsonResponse(res, 401, { message: 'Invalid email or password' })
+      }
+
+      const { password: _, ...safeUser } = user
+      const token = generateToken(user.id)
+      return jsonResponse(res, 200, { token, user: safeUser })
+    }
+
+    // POST /auth/register
+    if (method === 'POST' && path === '/auth/register') {
+      const { email, password, displayName } = await parseBody(req)
+      const db = readDb()
+
+      if (db.users.find((u) => u.email === email)) {
+        return jsonResponse(res, 409, { message: 'Email already exists' })
+      }
+
+      const newUser = {
+        id: randomUUID(),
+        email,
+        password,
+        displayName: displayName || 'New User',
+        avatarUrl: `https://i.pravatar.cc/300?u=${Date.now()}`,
+        bio: '',
+        gender: '',
+        birthday: '',
+        location: '',
+        occupation: '',
+        company: '',
+      }
+
+      db.users.push(newUser)
+      writeDb(db)
+
+      const { password: _, ...safeUser } = newUser
+      const token = generateToken(newUser.id)
+      return jsonResponse(res, 201, { token, user: safeUser })
+    }
+
+    // GET /users/me - get current user profile
+    if (method === 'GET' && path === '/users/me') {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+
+      const userId = getUserIdFromToken(authHeader.slice(7))
+      const db = readDb()
+      const user = db.users.find((u) => u.id === userId)
+
+      if (!user) {
+        return jsonResponse(res, 404, { message: 'User not found' })
+      }
+
+      const { password: _, ...safeUser } = user
+      return jsonResponse(res, 200, safeUser)
+    }
+
+    // GET /users - list all users
+    if (method === 'GET' && path === '/users') {
+      const db = readDb()
+      const users = db.users.map(({ password: _, ...u }) => u)
+      return jsonResponse(res, 200, users)
+    }
+
+    // Fallback - 404
+    return jsonResponse(res, 404, { message: 'Not found' })
+  } catch (err) {
+    console.error('Server error:', err)
+    return jsonResponse(res, 500, { message: 'Internal server error' })
+  }
+})
+
+server.listen(PORT, () => {
+  console.log(`\n  Mock API server running at http://localhost:${PORT}\n`)
+  console.log('  Endpoints:')
+  console.log('    POST /auth/login       - Login with email & password')
+  console.log('    POST /auth/register    - Register new user')
+  console.log('    GET  /users/me         - Get current user (requires token)')
+  console.log('    GET  /users            - List all users\n')
+})
