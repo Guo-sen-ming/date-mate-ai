@@ -28,7 +28,6 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     const result = await dispatch(login(data))
-    console.log(login(data), 'xx')
     if (login.fulfilled.match(result)) {
       navigate('/')
     } else if (login.rejected.match(result)) {
