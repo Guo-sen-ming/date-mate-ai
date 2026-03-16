@@ -1,0 +1,33 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "demo@example.com",
+      "password": "123456",
+      "displayName": "Alex Chen",
+      "avatarUrl": "https://i.pravatar.cc/300?img=1",
+      "bio": "Full-stack developer who loves hiking and coffee",
+      "gender": "male",
+      "birthday": "1995-03-15",
+      "location": "Shanghai",
+      "occupation": "Software Engineer",
+      "company": "Tech Corp"
+    },
+    {
+      "id": "2",
+      "email": "jane@example.com",
+      "password": "123456",
+      "displayName": "Jane Wang",
+      "avatarUrl": "https://i.pravatar.cc/300?img=5",
+      "bio": "UX designer, cat lover, weekend photographer",
+      "gender": "female",
+      "birthday": "1997-08-22",
+      "location": "Beijing",
+      "occupation": "UX Designer",
+      "company": "Design Studio"
+    }
+  ],
+  "matches": [],
+  "conversations": [],
+  "messages": []
+}

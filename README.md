@@ -16,7 +16,7 @@ Date-Mate-AI 是一个全栈约会应用，专为忙碌的IT专业人士设计�
 - **构建工具**: Vite
 - **状态管理**: Redux Toolkit
 - **路由**: React Router v6
-- **UI组件库**: Material UI
+- **UI组件库**: Radix UI
 - **HTTP客户端**: Axios
 - **样式解决方案**: Styled-components + Tailwind CSS
 - **表单处理**: React Hook Form
