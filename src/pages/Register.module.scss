@@ -1,0 +1,109 @@
+@use '../styles/variables' as *;
+
+.page {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-md;
+  background: linear-gradient(to bottom, $color-bg-gradient-start, $color-bg-gradient-end);
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: $color-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: $spacing-sm;
+}
+
+.emoji {
+  font-size: 24px;
+  margin-bottom: 2px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: $color-text-secondary;
+}
+
+.form {
+  width: 100%;
+  max-width: 300px;
+}
+
+.fieldGroup {
+  margin-bottom: 6px;
+  position: relative;
+  padding-bottom: 14px;
+}
+
+.label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.fieldError {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  font-size: 11px;
+  color: $color-error;
+}
+
+.passwordWrapper {
+  position: relative;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text-muted;
+  padding: 2px;
+
+  &:hover {
+    color: $color-text-secondary;
+  }
+}
+
+.submitBtn {
+  width: 100%;
+  max-width: 300px;
+  cursor: pointer;
+  margin-top: $spacing-xs;
+}
+
+.footer {
+  text-align: center;
+  font-size: 12px;
+  color: $color-text-secondary;
+  margin-top: $spacing-sm;
+}
+
+.footerLink {
+  color: $color-primary;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

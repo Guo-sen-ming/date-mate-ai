@@ -20,7 +20,7 @@ export default function HomePage() {
             <Button size="3" color="ruby" className={styles.primaryBtn}>Get Started</Button>
           </Link>
           <Link to="/login">
-            <Button size="3" variant="outline" color="gray" className={styles.secondaryBtn}>Sign In</Button>
+            <Button size="3" variant="outline" color="ruby" className={styles.secondaryBtn}>Sign In</Button>
           </Link>
         </div>
       )}

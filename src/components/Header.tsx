@@ -63,7 +63,7 @@ export default function Header() {
 
           <Dialog.Portal>
             <Dialog.Overlay className={styles.overlay} />
-            <Dialog.Content className={styles.drawer}>
+            <Dialog.Content className={styles.drawer} aria-describedby={undefined}>
               <Dialog.Title className={styles.srOnly}>Navigation Menu</Dialog.Title>
               <div className={styles.closeBtnWrapper}>
                 <Dialog.Close asChild>
