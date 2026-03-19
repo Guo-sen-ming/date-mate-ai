@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
-import { Button, TextField } from '@radix-ui/themes'
+import { useForm, Controller } from 'react-hook-form'
+import { Button, TextField, Select } from '@radix-ui/themes'
 import { EyeOpenIcon, EyeClosedIcon } from '@radix-ui/react-icons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { register as registerAction } from '@/store/slices/authSlice'
@@ -10,6 +10,7 @@ import styles from './Register.module.scss'
 
 interface RegisterFormData {
   displayName: string
+  gender: string
   email: string
   password: string
   confirmPassword: string
@@ -27,8 +28,13 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     watch,
+    control,
     formState: { errors },
-  } = useForm<RegisterFormData>()
+  } = useForm<RegisterFormData>({
+    defaultValues: {
+      gender: 'male',
+    },
+  })
 
   const passwordValue = watch('password')
 
@@ -38,6 +44,7 @@ export default function RegisterPage() {
         email: data.email,
         password: data.password,
         displayName: data.displayName,
+        gender: data.gender,
       }),
     )
     if (registerAction.fulfilled.match(result)) {
@@ -65,23 +72,44 @@ export default function RegisterPage() {
           <label htmlFor="displayName" className={styles.label}>
             Display Name
           </label>
-          <TextField.Root
-            id="displayName"
-            type="text"
-            placeholder="Your name"
-            size="3"
-            {...register('displayName', {
-              required: 'Display name is required',
-              minLength: {
-                value: 2,
-                message: 'Display name must be at least 2 characters',
-              },
-              maxLength: {
-                value: 30,
-                message: 'Display name must be at most 30 characters',
-              },
-            })}
-          />
+          <div className={styles.nameRow}>
+            <TextField.Root
+              id="displayName"
+              type="text"
+              placeholder="Your name"
+              size="3"
+              {...register('displayName', {
+                required: 'Display name is required',
+                minLength: {
+                  value: 2,
+                  message: 'At least 2 characters',
+                },
+                maxLength: {
+                  value: 30,
+                  message: 'At most 30 characters',
+                },
+              })}
+            />
+            <Controller
+              name="gender"
+              control={control}
+              defaultValue="male"
+              rules={{ required: 'Gender is required' }}
+              render={({ field }) => (
+                <Select.Root
+                  size="3"
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <Select.Trigger className={styles.genderTrigger} />
+                  <Select.Content position="popper">
+                    <Select.Item value="male">Mr.</Select.Item>
+                    <Select.Item value="female">Ms.</Select.Item>
+                  </Select.Content>
+                </Select.Root>
+              )}
+            />
+          </div>
           {errors.displayName && (
             <p className={styles.fieldError}>{errors.displayName.message}</p>
           )}
@@ -188,7 +216,6 @@ export default function RegisterPage() {
         <Button
           type="submit"
           size="3"
-          color="ruby"
           className={styles.submitBtn}
           loading={loading}
         >

@@ -107,3 +107,25 @@
     text-decoration: underline;
   }
 }
+
+.select {
+  display: none;
+}
+
+.nameRow {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+
+  // Let the text input fill remaining space
+  > :first-child {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.genderTrigger {
+  flex-shrink: 0;
+  width: 80px;
+  cursor: pointer;
+}

@@ -1,11 +1,11 @@
-// Color palette
-$color-primary: #e11d48;
-$color-primary-light: #fb7185;
-$color-primary-dark: #be123c;
+// Color palette - using CSS custom properties for gender theming
+$color-primary: var(--color-primary);
+$color-primary-light: var(--color-primary-light);
+$color-primary-dark: var(--color-primary-dark);
+$color-bg-gradient-start: var(--color-bg-gradient-start);
 
 $color-bg: #ffffff;
 $color-bg-secondary: #f9fafb;
-$color-bg-gradient-start: #fff1f2;
 $color-bg-gradient-end: #f3f4f6;
 
 $color-text: #111827;

@@ -68,6 +68,7 @@
 
 .primaryBtn {
   width: 100%;
+  max-width: 300px;
   cursor: pointer;
 
   @media (min-width: $breakpoint-sm) {
@@ -77,6 +78,7 @@
 
 .secondaryBtn {
   width: 100%;
+  max-width: 300px;
   cursor: pointer;
 
   @media (min-width: $breakpoint-sm) {

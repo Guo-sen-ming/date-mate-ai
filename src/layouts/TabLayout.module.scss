@@ -1,0 +1,16 @@
+@use '../styles/variables' as *;
+
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  padding-bottom: 56px;
+
+  @media (min-width: $breakpoint-md) {
+    padding-bottom: 0;
+  }
+}

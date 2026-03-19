@@ -85,7 +85,7 @@ const server = createServer(async (req, res) => {
 
     // POST /auth/register
     if (method === 'POST' && path === '/auth/register') {
-      const { email, password, displayName } = await parseBody(req)
+      const { email, password, displayName, gender } = await parseBody(req)
       const db = readDb()
 
       if (db.users.find((u) => u.email === email)) {
@@ -97,9 +97,9 @@ const server = createServer(async (req, res) => {
         email,
         password,
         displayName: displayName || 'New User',
-        avatarUrl: `https://i.pravatar.cc/300?u=${Date.now()}`,
+        avatarUrl: `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(email)}`,
         bio: '',
-        gender: '',
+        gender: gender || 'male',
         birthday: '',
         location: '',
         occupation: '',
@@ -130,6 +130,34 @@ const server = createServer(async (req, res) => {
       }
 
       const { password: _, ...safeUser } = user
+      return jsonResponse(res, 200, safeUser)
+    }
+
+    // PUT /users/me - update current user profile
+    if (method === 'PUT' && path === '/users/me') {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+
+      const userId = getUserIdFromToken(authHeader.slice(7))
+      const db = readDb()
+      const userIndex = db.users.findIndex((u) => u.id === userId)
+
+      if (userIndex === -1) {
+        return jsonResponse(res, 404, { message: 'User not found' })
+      }
+
+      const updates = await parseBody(req)
+      // Prevent updating sensitive fields
+      delete updates.id
+      delete updates.password
+      delete updates.email
+
+      db.users[userIndex] = { ...db.users[userIndex], ...updates }
+      writeDb(db)
+
+      const { password: _, ...safeUser } = db.users[userIndex]
       return jsonResponse(res, 200, safeUser)
     }
 

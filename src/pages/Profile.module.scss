@@ -1,0 +1,277 @@
+@use '../styles/variables' as *;
+
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: $spacing-md;
+}
+
+.loadingText {
+  text-align: center;
+  color: $color-text-secondary;
+  font-size: 14px;
+  padding-top: $spacing-3xl;
+}
+
+// ID Card
+.idCard {
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  color: #fff;
+  background: linear-gradient(135deg, $color-primary-dark, $color-primary-light);
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: $radius-sm;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.cardInfo {
+  min-width: 0;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.bio {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.occupation {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.cardDivider {
+  opacity: 0.15;
+}
+
+.cardBottom {
+  padding: 12px $spacing-lg;
+  background: $color-bg;
+}
+
+.emailRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.emailLabel {
+  font-size: 12px;
+  color: $color-text-muted;
+  flex-shrink: 0;
+}
+
+.emailValue {
+  font-size: 13px;
+  color: $color-text;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.emailToggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text-muted;
+  padding: 2px;
+  flex-shrink: 0;
+
+  &:hover {
+    color: $color-text-secondary;
+  }
+}
+
+// Info list
+.infoList {
+  background: $color-bg;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  margin-bottom: $spacing-lg;
+  overflow: hidden;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px $spacing-md;
+
+  & + & {
+    border-top: 1px solid $color-border;
+  }
+}
+
+.infoLabel {
+  font-size: 13px;
+  color: $color-text-secondary;
+}
+
+.infoValue {
+  font-size: 13px;
+  font-weight: 500;
+  color: $color-text;
+}
+
+// Actions
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.actionBtn {
+  width: 100%;
+  max-width: 300px;
+  cursor: pointer;
+}
+
+// Edit form
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding-bottom: 80px; // extra space to prevent sticky actions from covering content
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  position: relative;
+  padding-bottom: 14px;
+}
+
+.fieldRow {
+  display: flex;
+  flex-direction: column; // single column on mobile by default
+  gap: $spacing-sm;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 500;
+  color: $color-text-secondary;
+}
+
+.fieldError {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  font-size: 11px;
+  color: $color-error;
+}
+
+.formActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-top: $spacing-xs;
+}
+
+// Form section card styles
+.formSection {
+  background: $color-bg;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  padding: $spacing-md;
+
+  & + & {
+    margin-top: $spacing-md;
+  }
+}
+
+.sectionTitle {
+  font-size: 12px;
+  font-weight: 500;
+  color: $color-text-muted;
+  margin-bottom: $spacing-md;
+}
+
+.sectionBody {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+// Sticky bottom actions bar
+.stickyActions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid $color-border;
+  padding: $spacing-sm $spacing-md;
+  padding-bottom: calc(#{$spacing-sm} + env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+
+  .stickyActionsInner {
+    display: flex;
+    gap: $spacing-sm;
+    max-width: 300px;
+    width: 100%;
+
+    button {
+      flex: 1;
+    }
+  }
+}
+
+// Tablet and above responsive styles
+@media (min-width: $breakpoint-sm) {
+  .fieldRow {
+    flex-direction: row; // restore side-by-side layout on tablet+
+  }
+
+  .form {
+    padding-bottom: 0; // remove extra bottom padding on tablet+
+  }
+
+  .stickyActions {
+    position: static;
+    background: transparent;
+    backdrop-filter: none;
+    border-top: none;
+    padding: $spacing-sm 0;
+    padding-bottom: $spacing-sm;
+  }
+}

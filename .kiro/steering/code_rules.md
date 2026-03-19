@@ -23,6 +23,9 @@ inclusion: always
 - Use Radix UI (https://www.radix-ui.com/) as the primary component library for buttons, dialogs, dropdowns, and other interactive elements
 - Prefer Radix UI primitives over custom implementations for accessibility and consistency
 - Test all layouts at 375px (mobile), 768px (tablet), and 1024px+ (desktop) widths
+- All buttons must have a max-width of 300px
+- Do NOT hardcode `color` prop on Radix UI `<Button>`. Let buttons inherit the theme's `accentColor` so they follow the gender-based theme automatically
+- Prefer Radix UI components over native HTML elements (e.g., use Radix `Select` instead of native `<select>`, Radix `TextArea` instead of native `<textarea>`)
 
 ## Git Branch Rules
 - Do NOT write code directly on the main branch

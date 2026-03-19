@@ -101,7 +101,6 @@ export default function LoginPage() {
         <Button
           type="submit"
           size="3"
-          color="ruby"
           className={styles.submitBtn}
           loading={loading}
         >

@@ -1,5 +1,21 @@
 @use 'styles/variables' as *;
 
+// Default theme (female / unset) - pink/ruby
+:root {
+  --color-primary: #e11d48;
+  --color-primary-light: #fb7185;
+  --color-primary-dark: #be123c;
+  --color-bg-gradient-start: #fff1f2;
+}
+
+// Male theme - blue
+:root[data-gender='male'] {
+  --color-primary: #2563eb;
+  --color-primary-light: #60a5fa;
+  --color-primary-dark: #1d4ed8;
+  --color-bg-gradient-start: #eff6ff;
+}
+
 *,
 *::before,
 *::after {

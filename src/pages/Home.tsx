@@ -17,16 +17,16 @@ export default function HomePage() {
       {!isAuthenticated && (
         <div className={styles.actions}>
           <Link to="/register">
-            <Button size="3" color="ruby" className={styles.primaryBtn}>Get Started</Button>
+            <Button size="3" className={styles.primaryBtn}>Get Started</Button>
           </Link>
           <Link to="/login">
-            <Button size="3" variant="outline" color="ruby" className={styles.secondaryBtn}>Sign In</Button>
+            <Button size="3" variant="outline" className={styles.secondaryBtn}>Sign In</Button>
           </Link>
         </div>
       )}
       {isAuthenticated && (
         <Link to="/discover">
-          <Button size="3" color="ruby" className={styles.primaryBtn}>Start Discovering</Button>
+          <Button size="3" className={styles.primaryBtn}>Start Discovering</Button>
         </Link>
       )}
     </div>

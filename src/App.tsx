@@ -1,19 +1,38 @@
+import { useEffect } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { Theme } from '@radix-ui/themes'
 import '@radix-ui/themes/styles.css'
 import { store } from '@/store'
+import { useAppSelector } from '@/store/hooks'
 import { ToastProvider } from '@/components/Toast'
 import router from '@/router'
+
+function ThemedApp() {
+  const { profile } = useAppSelector((state) => state.profile)
+  const isMale = profile?.gender === 'male'
+
+  useEffect(() => {
+    const gender = profile?.gender || ''
+    document.documentElement.setAttribute('data-gender', gender)
+    return () => {
+      document.documentElement.removeAttribute('data-gender')
+    }
+  }, [profile?.gender])
+
+  return (
+    <Theme accentColor={isMale ? 'blue' : 'ruby'} radius="medium" scaling="100%">
+      <ToastProvider>
+        <RouterProvider router={router} />
+      </ToastProvider>
+    </Theme>
+  )
+}
 
 export default function App() {
   return (
     <Provider store={store}>
-      <Theme accentColor="ruby" radius="medium" scaling="100%">
-        <ToastProvider>
-          <RouterProvider router={router} />
-        </ToastProvider>
-      </Theme>
+      <ThemedApp />
     </Provider>
   )
 }
