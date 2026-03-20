@@ -6,11 +6,13 @@ import AuthGuard from '@/components/AuthGuard'
 import HomePage from '@/pages/Home'
 import LoginPage from '@/pages/Login'
 import RegisterPage from '@/pages/Register'
-import DiscoverPage from '@/pages/Discover'
-import MatchesPage from '@/pages/Matches'
-import MessagesPage from '@/pages/Messages'
-import ProfilePage from '@/pages/Profile'
-import StoryPage from '@/pages/Story'
+import DiscoverPage from '@/pages/discover/Discover'
+import MatchesPage from '@/pages/matches/Matches'
+import MessagesPage from '@/pages/messages/Messages'
+import ProfilePage from '@/pages/profile/Profile'
+import ProfileEditPage from '@/pages/profile/ProfileEdit'
+import SettingsPage from '@/pages/profile/Settings'
+import StoryPage from '@/pages/story/Story'
 
 const router = createBrowserRouter([
   {
@@ -33,6 +35,8 @@ const router = createBrowserRouter([
           { path: 'story', element: <StoryPage /> },
         ],
       },
+      { path: 'profile/edit', element: <ProfileEditPage /> },
+      { path: 'profile/settings', element: <SettingsPage /> },
     ],
   },
   {

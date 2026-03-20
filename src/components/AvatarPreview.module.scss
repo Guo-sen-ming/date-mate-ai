@@ -1,0 +1,156 @@
+@use '../styles/variables' as *;
+
+// Full-screen preview overlay
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// Top bar with close and menu
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm $spacing-md;
+  padding-top: calc($spacing-sm + env(safe-area-inset-top, 0px));
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  border-radius: $radius-sm;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.menuBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  border-radius: $radius-sm;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// Image container - centered
+.imageContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: $spacing-md;
+}
+
+.previewImage {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: $radius-sm;
+}
+
+// Bottom sheet menu
+.bottomSheet {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.sheetBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.15s ease;
+}
+
+.sheetContent {
+  position: relative;
+  background: $color-bg;
+  border-radius: $radius-lg $radius-lg 0 0;
+  padding-bottom: env(safe-area-inset-bottom, $spacing-md);
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.sheetItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  width: 100%;
+  padding: 14px $spacing-lg;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: $color-text;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 48px;
+
+  &:active {
+    background: $color-bg-secondary;
+  }
+
+  & + & {
+    border-top: 1px solid $color-border;
+  }
+}
+
+.sheetCancel {
+  display: block;
+  width: 100%;
+  padding: 14px $spacing-lg;
+  background: none;
+  border: none;
+  border-top: 8px solid $color-bg-secondary;
+  cursor: pointer;
+  font-size: 15px;
+  color: $color-text-secondary;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 48px;
+
+  &:active {
+    background: $color-bg-secondary;
+  }
+}
+
+// Hidden file input
+.hiddenInput {
+  display: none;
+}

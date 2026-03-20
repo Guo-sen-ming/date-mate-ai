@@ -1,4 +1,4 @@
-@use '../styles/variables' as *;
+@use '../../styles/variables' as *;
 
 .page {
   max-width: 480px;
@@ -28,6 +28,44 @@
   padding: $spacing-lg;
   color: #fff;
   background: linear-gradient(135deg, $color-primary-dark, $color-primary-light);
+  position: relative;
+}
+
+// Settings gear button on ID card
+.settingsBtn {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: $radius-sm;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+// Avatar button wrapper on ID card
+.avatarBtn {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: $radius-sm;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  flex-shrink: 0;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .avatar {
@@ -35,8 +73,7 @@
   height: 72px;
   border-radius: $radius-sm;
   object-fit: cover;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  flex-shrink: 0;
+  background-position: center;
 }
 
 .cardInfo {
@@ -60,9 +97,8 @@
   font-size: 12px;
   color: rgba(255, 255, 255, 0.85);
   margin-bottom: 2px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .occupation {
@@ -164,7 +200,7 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
-  padding-bottom: 80px; // extra space to prevent sticky actions from covering content
+  padding-bottom: 120px; // extra space for sticky actions + bottom nav
 }
 
 .field {
@@ -232,17 +268,16 @@
 // Sticky bottom actions bar
 .stickyActions {
   position: fixed;
-  bottom: 0;
+  bottom: calc(56px + env(safe-area-inset-bottom, 0px));
   left: 0;
   right: 0;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   border-top: 1px solid $color-border;
   padding: $spacing-sm $spacing-md;
-  padding-bottom: calc(#{$spacing-sm} + env(safe-area-inset-bottom));
   display: flex;
   justify-content: center;
-  z-index: 10;
+  z-index: 101;
 
   .stickyActionsInner {
     display: flex;

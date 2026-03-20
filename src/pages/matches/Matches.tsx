@@ -1,4 +1,4 @@
-import styles from './common.module.scss'
+import styles from '../common.module.scss'
 
 export default function MatchesPage() {
   return (

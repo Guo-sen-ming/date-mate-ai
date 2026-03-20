@@ -1,0 +1,199 @@
+@use '../../styles/variables' as *;
+
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: $spacing-md;
+  padding-top: 0;
+}
+
+.loadingText {
+  text-align: center;
+  color: $color-text-secondary;
+  font-size: 14px;
+  padding-top: $spacing-3xl;
+}
+
+// Top bar with back button
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm 0;
+  margin-bottom: $spacing-md;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text;
+  border-radius: $radius-sm;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    background: $color-bg-secondary;
+  }
+}
+
+.pageTitle {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+  text-align: center;
+}
+
+// Spacer to balance the back button for centering the title
+.topBarSpacer {
+  min-width: 44px;
+}
+
+// Avatar picker
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.avatarPicker {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  border-radius: $radius-sm;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: $radius-sm;
+}
+
+.avatarOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: $radius-sm;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.2s;
+
+  .avatarPicker:active &,
+  .avatarPicker:hover & {
+    opacity: 1;
+  }
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.avatarHint {
+  font-size: 12px;
+  color: $color-text-muted;
+}
+
+// Edit form
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  position: relative;
+  padding-bottom: 14px;
+}
+
+.fieldRow {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 500;
+  color: $color-text-secondary;
+}
+
+.fieldError {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  font-size: 11px;
+  color: $color-error;
+}
+
+.charCount {
+  font-size: 11px;
+  color: $color-text-muted;
+  text-align: right;
+}
+
+// Form section card styles
+.formSection {
+  background: $color-bg;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  padding: $spacing-md;
+
+  & + & {
+    margin-top: $spacing-md;
+  }
+}
+
+.sectionTitle {
+  font-size: 12px;
+  font-weight: 500;
+  color: $color-text-muted;
+  margin-bottom: $spacing-md;
+}
+
+.sectionBody {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+// Save button area
+.saveActions {
+  display: flex;
+  justify-content: center;
+  margin-top: $spacing-lg;
+  padding-bottom: $spacing-lg;
+}
+
+.saveBtn {
+  width: 100%;
+  max-width: 300px;
+  cursor: pointer;
+}
+
+// Tablet and above responsive styles
+@media (min-width: $breakpoint-sm) {
+  .fieldRow {
+    flex-direction: row;
+  }
+}

@@ -1,0 +1,83 @@
+@use '../styles/variables' as *;
+
+// Full-screen overlay for cropper
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+}
+
+// Crop area container
+.cropContainer {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+// Bottom controls bar
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: rgba(0, 0, 0, 0.85);
+}
+
+// Zoom slider row
+.sliderRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 0 $spacing-sm;
+}
+
+.sliderLabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
+}
+
+.slider {
+  flex: 1;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  outline: none;
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    border: none;
+  }
+}
+
+// Action buttons row
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-sm;
+  max-width: 300px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.actionBtn {
+  flex: 1;
+  cursor: pointer;
+}
