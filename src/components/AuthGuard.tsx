@@ -1,8 +1,17 @@
+import { useEffect } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
-import { useAppSelector } from '@/store/hooks'
+import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { fetchCurrentUser } from '@/store/slices/authSlice'
 
 export default function AuthGuard() {
-  const { isAuthenticated } = useAppSelector((state) => state.auth)
+  const dispatch = useAppDispatch()
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth)
+
+  useEffect(() => {
+    if (isAuthenticated && !user) {
+      dispatch(fetchCurrentUser())
+    }
+  }, [isAuthenticated, user, dispatch])
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />

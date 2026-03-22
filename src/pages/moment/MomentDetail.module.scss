@@ -1,0 +1,275 @@
+@use '../../styles/variables' as *;
+
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: $color-bg;
+  padding-bottom: 64px;
+}
+
+// Top bar: back + avatar + author info
+.topBar {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  gap: $spacing-sm;
+  position: sticky;
+  top: 0;
+  background: $color-bg;
+  z-index: 10;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  margin-left: -12px;
+  color: $color-text;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.topAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.topAuthorInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.topAuthorName {
+  font-size: 15px;
+  font-weight: 600;
+  color: $color-text;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topMeta {
+  font-size: 12px;
+  color: $color-text-muted;
+}
+
+// Image carousel
+.carousel {
+  :global(.swiper-pagination-bullet) {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.7);
+    opacity: 1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  :global(.swiper-pagination-bullet-active) {
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.carouselImg {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+}
+
+// Content
+.contentSection {
+  padding: $spacing-md;
+}
+
+.text {
+  font-size: 15px;
+  color: $color-text;
+  line-height: 1.6;
+}
+
+.contentFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: $spacing-md;
+}
+
+.timeAgo {
+  font-size: 13px;
+  color: $color-text-muted;
+}
+
+.likeBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+  font-size: 13px;
+  color: $color-text-secondary;
+  border-radius: $radius-sm;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.liked {
+  color: #ef4444;
+}
+
+// Comments section
+.commentsSection {
+  border-top: 1px solid $color-border;
+  padding: $spacing-md;
+}
+
+.commentsTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+  margin-bottom: $spacing-md;
+}
+
+.commentsCount {
+  font-weight: 400;
+  color: $color-text-muted;
+  margin-left: $spacing-xs;
+  font-size: 14px;
+}
+
+.comment {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.commentAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-sm;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.commentBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.commentUser {
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.commentText {
+  font-size: 14px;
+  color: $color-text-secondary;
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.commentTime {
+  font-size: 11px;
+  color: $color-text-muted;
+  margin-top: 4px;
+}
+
+.noComments {
+  font-size: 14px;
+  color: $color-text-muted;
+  text-align: center;
+  padding: $spacing-lg 0;
+}
+
+// Bottom bar: comment input + send
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: $spacing-sm $spacing-md $spacing-md;
+  padding-bottom: max($spacing-md, env(safe-area-inset-bottom, $spacing-md));
+  background: $color-bg;
+  border-top: 1px solid $color-border;
+  z-index: 10;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  background: $color-bg-secondary;
+  border-radius: 24px;
+  padding: 4px 4px 4px $spacing-md;
+}
+
+.commentInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: $color-text;
+  outline: none;
+  min-height: 36px;
+  line-height: 36px;
+
+  &::placeholder {
+    color: $color-text-muted;
+  }
+}
+
+.sendBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: $color-text-muted;
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  &:active:not(:disabled) {
+    opacity: 0.7;
+  }
+}
+
+.sendActive {
+  background: $color-primary;
+}
+
+.loading {
+  text-align: center;
+  padding: $spacing-3xl 0;
+  color: $color-text-muted;
+  font-size: 14px;
+}

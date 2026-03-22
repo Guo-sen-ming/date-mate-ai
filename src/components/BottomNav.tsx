@@ -12,7 +12,7 @@ const tabs = [
   { path: '/messages', label: 'Messages', icon: ChatBubbleIcon },
   { path: '/discover', label: 'Discover', icon: MagnifyingGlassIcon },
   { path: '/matches', label: 'Matches', icon: HeartIcon },
-  { path: '/story', label: 'Story', icon: BookmarkIcon },
+  { path: '/moment', label: 'Moment', icon: BookmarkIcon },
   { path: '/profile', label: 'Me', icon: PersonIcon },
 ]
 

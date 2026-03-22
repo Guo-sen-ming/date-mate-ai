@@ -38,6 +38,19 @@ export const login = createAsyncThunk(
   },
 )
 
+export const fetchCurrentUser = createAsyncThunk(
+  'auth/fetchCurrentUser',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/users/me')
+      return response.data
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } }
+      return rejectWithValue(err.response?.data?.message || 'Failed to fetch user')
+    }
+  },
+)
+
 export const register = createAsyncThunk(
   'auth/register',
   async (
@@ -99,6 +112,9 @@ const authSlice = createSlice({
       .addCase(register.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload as string
+      })
+      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+        state.user = action.payload
       })
   },
 })

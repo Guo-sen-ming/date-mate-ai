@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { Button, TextField, TextArea, Select, AlertDialog, Flex } from '@radix-ui/themes'
-import { ArrowLeftIcon, CameraIcon } from '@radix-ui/react-icons'
+import { ChevronLeftIcon, CameraIcon } from '@radix-ui/react-icons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { fetchProfile, updateProfile } from '@/store/slices/profileSlice'
 import { useToast } from '@/components/ToastContext'
@@ -157,7 +157,7 @@ export default function ProfileEditPage() {
           onClick={handleBack}
           aria-label="Go back"
         >
-          <ArrowLeftIcon width={20} height={20} />
+          <ChevronLeftIcon width={24} height={24} />
         </button>
         <h2 className={styles.pageTitle}>Edit Profile</h2>
         <div className={styles.topBarSpacer} />

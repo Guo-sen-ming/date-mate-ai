@@ -1,0 +1,84 @@
+@use '../styles/variables' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm $spacing-md;
+  z-index: 10;
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.counter {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+}
+
+// Invisible spacer to balance the close button for centering
+.spacer {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  :global(.swiper-slide) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :global(.swiper-pagination-bullet) {
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 1;
+  }
+
+  :global(.swiper-pagination-bullet-active) {
+    background: #fff;
+  }
+}
+
+.image {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+}

@@ -1,0 +1,105 @@
+@use '../../styles/variables' as *;
+
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: $spacing-md;
+  padding-bottom: 80px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+.sortTabs {
+  display: flex;
+  gap: $spacing-xs;
+  background: $color-bg-secondary;
+  border-radius: $radius-sm;
+  padding: 2px;
+}
+
+.sortTab {
+  min-height: 44px;
+  padding: 0 $spacing-md;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-text-secondary;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+
+  &.active {
+    background: $color-bg;
+    color: $color-text;
+    box-shadow: $shadow-sm;
+  }
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.loading {
+  text-align: center;
+  padding: $spacing-3xl 0;
+  color: $color-text-muted;
+  font-size: 14px;
+}
+
+.empty {
+  text-align: center;
+  padding: $spacing-3xl 0;
+  color: $color-text-muted;
+  font-size: 14px;
+}
+
+// Skeleton card layout
+.skeletonCard {
+  background: $color-bg;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.skeletonHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.skeletonMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skeletonBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeletonFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: $spacing-xs;
+}

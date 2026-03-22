@@ -12,7 +12,8 @@ import MessagesPage from '@/pages/messages/Messages'
 import ProfilePage from '@/pages/profile/Profile'
 import ProfileEditPage from '@/pages/profile/ProfileEdit'
 import SettingsPage from '@/pages/profile/Settings'
-import StoryPage from '@/pages/story/Story'
+import MomentPage from '@/pages/moment/Moment'
+import MomentDetailPage from '@/pages/moment/MomentDetail'
 
 const router = createBrowserRouter([
   {
@@ -32,11 +33,12 @@ const router = createBrowserRouter([
           { path: 'matches', element: <MatchesPage /> },
           { path: 'messages', element: <MessagesPage /> },
           { path: 'profile', element: <ProfilePage /> },
-          { path: 'story', element: <StoryPage /> },
+          { path: 'moment', element: <MomentPage /> },
         ],
       },
       { path: 'profile/edit', element: <ProfileEditPage /> },
       { path: 'profile/settings', element: <SettingsPage /> },
+      { path: 'moment/:id', element: <MomentDetailPage /> },
     ],
   },
   {

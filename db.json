@@ -5,7 +5,7 @@
       "email": "demo@example.com",
       "password": "123456",
       "displayName": "Alex Chen",
-      "avatarUrl": "https://i.pravatar.cc/300?img=1",
+      "avatarUrl": "https://api.dicebear.com/9.x/adventurer/svg?seed=demo%40example.com",
       "bio": "Full-stack developer who loves hiking and coffee",
       "gender": "male",
       "birthday": "1995-03-15",
@@ -18,7 +18,7 @@
       "email": "jane@example.com",
       "password": "123456",
       "displayName": "Jane Wang",
-      "avatarUrl": "https://i.pravatar.cc/300?img=5",
+      "avatarUrl": "https://api.dicebear.com/9.x/adventurer/svg?seed=jane%40example.com",
       "bio": "UX designer, cat lover, weekend photographer",
       "gender": "female",
       "birthday": "1997-08-22",
@@ -55,5 +55,132 @@
   ],
   "matches": [],
   "conversations": [],
-  "messages": []
+  "messages": [],
+  "stories": [
+    {
+      "id": "s1",
+      "authorId": "1",
+      "title": "Weekend Hiking Adventure",
+      "content": "Explored the beautiful trails near the city. The weather was perfect and the views were breathtaking.",
+      "images": [
+        "https://picsum.photos/seed/hike1/600/800",
+        "https://picsum.photos/seed/hike2/600/800",
+        "https://picsum.photos/seed/hike3/600/800",
+        "https://picsum.photos/seed/hike4/600/800"
+      ],
+      "video": null,
+      "location": "Shanghai",
+      "likes": [
+        "2",
+        "914b7f9b-6479-4e16-ab97-ede2674b4082"
+      ],
+      "comments": [
+        {
+          "id": "c1",
+          "userId": "2",
+          "text": "Amazing views! Where is this?",
+          "createdAt": "2026-03-20T10:30:00Z"
+        },
+        {
+          "id": "c2",
+          "userId": "1",
+          "text": "Near Sheshan National Forest Park!",
+          "createdAt": "2026-03-20T11:00:00Z"
+        },
+        {
+          "id": "31b25605-646b-45a3-934d-8269896afcd5",
+          "userId": "914b7f9b-6479-4e16-ab97-ede2674b4082",
+          "text": "hahhah",
+          "createdAt": "2026-03-22T06:43:53.855Z"
+        },
+        {
+          "id": "b4453884-bdc4-4b78-88dd-71c996a47e79",
+          "userId": "914b7f9b-6479-4e16-ab97-ede2674b4082",
+          "text": "xxx",
+          "createdAt": "2026-03-22T07:26:51.169Z"
+        }
+      ],
+      "createdAt": "2026-03-20T08:00:00Z"
+    },
+    {
+      "id": "s2",
+      "authorId": "2",
+      "title": "Coffee & Design",
+      "content": "Found this cozy little cafe with the best latte art. Perfect spot for some design inspiration.",
+      "images": [
+        "https://picsum.photos/seed/cafe1/600/800",
+        "https://picsum.photos/seed/cafe2/600/800"
+      ],
+      "video": null,
+      "location": "Beijing",
+      "likes": [
+        "1"
+      ],
+      "comments": [
+        {
+          "id": "c3",
+          "userId": "1",
+          "text": "Love the vibe! Need to visit.",
+          "createdAt": "2026-03-19T15:00:00Z"
+        }
+      ],
+      "createdAt": "2026-03-19T14:00:00Z"
+    },
+    {
+      "id": "s3",
+      "authorId": "1",
+      "title": "New Project Launch",
+      "content": "Excited to share that our team just shipped a major feature. Months of hard work finally paid off!",
+      "images": [
+        "https://picsum.photos/seed/code1/600/800"
+      ],
+      "video": null,
+      "location": null,
+      "likes": [],
+      "comments": [],
+      "createdAt": "2026-03-18T20:00:00Z"
+    },
+    {
+      "id": "s4",
+      "authorId": "2",
+      "title": "Cat Cafe Visit",
+      "content": "Spent the afternoon surrounded by adorable cats. Best therapy ever!",
+      "images": [
+        "https://picsum.photos/seed/cat1/600/800",
+        "https://picsum.photos/seed/cat2/600/800",
+        "https://picsum.photos/seed/cat3/600/800",
+        "https://picsum.photos/seed/cat4/600/800",
+        "https://picsum.photos/seed/cat5/600/800",
+        "https://picsum.photos/seed/cat6/600/800"
+      ],
+      "video": null,
+      "location": "Beijing",
+      "likes": [
+        "1",
+        "2",
+        "914b7f9b-6479-4e16-ab97-ede2674b4082"
+      ],
+      "comments": [
+        {
+          "id": "c4",
+          "userId": "1",
+          "text": "So cute! Which cafe is this?",
+          "createdAt": "2026-03-17T16:00:00Z"
+        },
+        {
+          "id": "c5",
+          "userId": "2",
+          "text": "Its called Meow Cafe near Sanlitun!",
+          "createdAt": "2026-03-17T16:30:00Z"
+        },
+        {
+          "id": "d9a69d98-4816-4ffc-8686-ae0118f61250",
+          "userId": "914b7f9b-6479-4e16-ab97-ede2674b4082",
+          "text": "aaa",
+          "createdAt": "2026-03-22T06:57:18.518Z"
+        }
+      ],
+      "createdAt": "2026-03-17T12:00:00Z"
+    }
+  ]
 }

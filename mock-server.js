@@ -168,6 +168,122 @@ const server = createServer(async (req, res) => {
       return jsonResponse(res, 200, users)
     }
 
+    // GET /stories - list all stories with author info
+    if (method === 'GET' && path === '/stories') {
+      const db = readDb()
+      const stories = (db.stories || []).map((story) => {
+        const author = db.users.find((u) => u.id === story.authorId)
+        return {
+          ...story,
+          author: author
+            ? { displayName: author.displayName, avatarUrl: author.avatarUrl }
+            : { displayName: 'Unknown', avatarUrl: '' },
+        }
+      })
+      stories.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      return jsonResponse(res, 200, stories)
+    }
+
+    // GET /stories/:id - get story detail with author info and comment user info
+    if (method === 'GET' && /^\/stories\/[^/]+$/.test(path)) {
+      const storyId = path.split('/')[2]
+      const db = readDb()
+      const story = (db.stories || []).find((s) => s.id === storyId)
+      if (!story) {
+        return jsonResponse(res, 404, { message: 'Story not found' })
+      }
+      const author = db.users.find((u) => u.id === story.authorId)
+      const commentsWithUser = story.comments.map((c) => {
+        const user = db.users.find((u) => u.id === c.userId)
+        return {
+          ...c,
+          user: user
+            ? { displayName: user.displayName, avatarUrl: user.avatarUrl }
+            : { displayName: 'Unknown', avatarUrl: '' },
+        }
+      })
+      return jsonResponse(res, 200, {
+        ...story,
+        comments: commentsWithUser,
+        author: author
+          ? { displayName: author.displayName, avatarUrl: author.avatarUrl }
+          : { displayName: 'Unknown', avatarUrl: '' },
+      })
+    }
+
+    // POST /stories/:id/like - toggle like on a story
+    if (method === 'POST' && /^\/stories\/[^/]+\/like$/.test(path)) {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+      const userId = getUserIdFromToken(authHeader.slice(7))
+      const storyId = path.split('/')[2]
+      const db = readDb()
+      const story = (db.stories || []).find((s) => s.id === storyId)
+      if (!story) {
+        return jsonResponse(res, 404, { message: 'Story not found' })
+      }
+      const likeIndex = story.likes.indexOf(userId)
+      if (likeIndex === -1) {
+        story.likes.push(userId)
+      } else {
+        story.likes.splice(likeIndex, 1)
+      }
+      writeDb(db)
+      const author = db.users.find((u) => u.id === story.authorId)
+      return jsonResponse(res, 200, {
+        ...story,
+        author: author
+          ? { displayName: author.displayName, avatarUrl: author.avatarUrl }
+          : { displayName: 'Unknown', avatarUrl: '' },
+      })
+    }
+
+    // POST /stories/:id/comments - add comment to a story
+    if (method === 'POST' && /^\/stories\/[^/]+\/comments$/.test(path)) {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+      const userId = getUserIdFromToken(authHeader.slice(7))
+      const storyId = path.split('/')[2]
+      const { text } = await parseBody(req)
+      if (!text) {
+        return jsonResponse(res, 400, { message: 'Comment text is required' })
+      }
+      const db = readDb()
+      const story = (db.stories || []).find((s) => s.id === storyId)
+      if (!story) {
+        return jsonResponse(res, 404, { message: 'Story not found' })
+      }
+      const newComment = {
+        id: randomUUID(),
+        userId,
+        text,
+        createdAt: new Date().toISOString(),
+      }
+      story.comments.push(newComment)
+      writeDb(db)
+      const author = db.users.find((u) => u.id === story.authorId)
+      const commentsWithUser = story.comments.map((c) => {
+        const user = db.users.find((u) => u.id === c.userId)
+        return {
+          ...c,
+          user: user
+            ? { displayName: user.displayName, avatarUrl: user.avatarUrl }
+            : { displayName: 'Unknown', avatarUrl: '' },
+        }
+      })
+      return jsonResponse(res, 200, {
+        ...story,
+        comments: commentsWithUser,
+        author: author
+          ? { displayName: author.displayName, avatarUrl: author.avatarUrl }
+          : { displayName: 'Unknown', avatarUrl: '' },
+      })
+    }
+
     // Fallback - 404
     return jsonResponse(res, 404, { message: 'Not found' })
   } catch (err) {

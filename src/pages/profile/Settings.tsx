@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import {
-  ArrowLeftIcon,
+  ChevronLeftIcon,
   Pencil1Icon,
   LockClosedIcon,
   BellIcon,
@@ -56,7 +56,7 @@ export default function SettingsPage() {
           onClick={() => navigate('/profile')}
           aria-label="Go back"
         >
-          <ArrowLeftIcon width={20} height={20} />
+          <ChevronLeftIcon width={24} height={24} />
         </button>
         <h1 className={styles.pageTitle}>Settings</h1>
         <div className={styles.topBarSpacer} />

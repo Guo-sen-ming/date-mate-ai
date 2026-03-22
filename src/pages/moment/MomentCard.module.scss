@@ -1,0 +1,174 @@
+@use '../../styles/variables' as *;
+
+.card {
+  background: $color-bg;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md;
+  gap: $spacing-sm;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-sm;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.authorInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.authorName {
+  font-size: 15px;
+  font-weight: 600;
+  color: $color-text;
+  line-height: 1.3;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: 12px;
+  color: $color-text-muted;
+  margin-top: 2px;
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: $color-text-muted;
+}
+
+.cardBody {
+  padding: 0 $spacing-md;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+  margin-bottom: $spacing-xs;
+  line-height: 1.4;
+}
+
+.content {
+  font-size: 14px;
+  color: $color-text-secondary;
+  line-height: 1.5;
+  margin-bottom: $spacing-sm;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Photo grid: 1 left + 2 right stacked
+.photoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  margin-bottom: $spacing-sm;
+}
+
+.photoLeft {
+  grid-row: 1 / 3;
+  aspect-ratio: 3 / 4;
+}
+
+.photoRight {
+  aspect-ratio: 3 / 2;
+}
+
+.photoSingle {
+  grid-column: 1 / -1;
+  grid-row: 1 / 3;
+  aspect-ratio: 4 / 3;
+}
+
+.photoTwo {
+  aspect-ratio: 1 / 1;
+}
+
+.gridImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.moreOverlay {
+  position: relative;
+}
+
+.moreCount {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+// Action bar
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm $spacing-md $spacing-md;
+}
+
+.timeAgo {
+  font-size: 12px;
+  color: $color-text-muted;
+  line-height: 44px;
+}
+
+.actionBtns {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $spacing-sm;
+  border-radius: $radius-sm;
+  font-size: 13px;
+  color: $color-text-secondary;
+  min-height: 44px;
+  min-width: 44px;
+
+  &:active {
+    opacity: 0.6;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.liked {
+  color: #ef4444;
+}
