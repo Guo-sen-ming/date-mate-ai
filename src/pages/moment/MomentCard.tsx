@@ -100,7 +100,9 @@ export default function StoryCard({ story }: Props) {
             {story.author?.displayName || 'Unknown'}
           </div>
           <div className={styles.meta}>
-            {story.location && <span>{story.location}</span>}
+            {(story.author?.location || story.location) && (
+              <span>{story.author?.location || story.location}</span>
+            )}
           </div>
         </div>
       </div>

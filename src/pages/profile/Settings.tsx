@@ -15,6 +15,7 @@ import { AlertDialog, Button } from '@radix-ui/themes'
 import { useState } from 'react'
 import { useAppDispatch } from '@/store/hooks'
 import { logout } from '@/store/slices/authSlice'
+import { clearProfile } from '@/store/slices/profileSlice'
 import styles from './Settings.module.scss'
 
 interface SettingsItemProps {
@@ -44,6 +45,7 @@ export default function SettingsPage() {
 
   const handleLogout = () => {
     dispatch(logout())
+    dispatch(clearProfile())
     navigate('/login')
   }
 

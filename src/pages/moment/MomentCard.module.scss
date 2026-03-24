@@ -96,7 +96,12 @@
 .photoSingle {
   grid-column: 1 / -1;
   grid-row: 1 / 3;
-  aspect-ratio: 4 / 3;
+}
+
+.photoSingle .gridImg {
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: $radius-sm;
 }
 
 .photoTwo {

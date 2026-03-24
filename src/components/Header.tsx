@@ -4,6 +4,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { HamburgerMenuIcon, Cross1Icon } from '@radix-ui/react-icons'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { logout } from '@/store/slices/authSlice'
+import { clearProfile } from '@/store/slices/profileSlice'
 import styles from './Header.module.scss'
 
 export default function Header() {
@@ -14,6 +15,7 @@ export default function Header() {
 
   const handleLogout = () => {
     dispatch(logout())
+    dispatch(clearProfile())
     setMobileMenuOpen(false)
     navigate('/login')
   }

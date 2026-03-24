@@ -168,6 +168,39 @@ const server = createServer(async (req, res) => {
       return jsonResponse(res, 200, users)
     }
 
+    // POST /stories - create a new story
+    if (method === 'POST' && path === '/stories') {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+      const userId = getUserIdFromToken(authHeader.slice(7))
+      const { title, content, images, location } = await parseBody(req)
+      const db = readDb()
+      const newStory = {
+        id: randomUUID(),
+        authorId: userId,
+        title: title || '',
+        content: content || '',
+        images: images || [],
+        video: null,
+        location: location || null,
+        likes: [],
+        comments: [],
+        createdAt: new Date().toISOString(),
+      }
+      if (!db.stories) db.stories = []
+      db.stories.unshift(newStory)
+      writeDb(db)
+      const author = db.users.find((u) => u.id === userId)
+      return jsonResponse(res, 201, {
+        ...newStory,
+        author: author
+          ? { displayName: author.displayName, avatarUrl: author.avatarUrl }
+          : { displayName: 'Unknown', avatarUrl: '' },
+      })
+    }
+
     // GET /stories - list all stories with author info
     if (method === 'GET' && path === '/stories') {
       const db = readDb()
@@ -176,8 +209,8 @@ const server = createServer(async (req, res) => {
         return {
           ...story,
           author: author
-            ? { displayName: author.displayName, avatarUrl: author.avatarUrl }
-            : { displayName: 'Unknown', avatarUrl: '' },
+            ? { displayName: author.displayName, avatarUrl: author.avatarUrl, location: author.location || '' }
+            : { displayName: 'Unknown', avatarUrl: '', location: '' },
         }
       })
       stories.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))

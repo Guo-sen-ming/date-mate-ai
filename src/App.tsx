@@ -10,15 +10,15 @@ import router from '@/router'
 
 function ThemedApp() {
   const { profile } = useAppSelector((state) => state.profile)
-  const isMale = profile?.gender === 'male'
+  const gender = profile?.gender || localStorage.getItem('userGender') || ''
+  const isMale = gender === 'male'
 
   useEffect(() => {
-    const gender = profile?.gender || ''
     document.documentElement.setAttribute('data-gender', gender)
     return () => {
       document.documentElement.removeAttribute('data-gender')
     }
-  }, [profile?.gender])
+  }, [gender])
 
   return (
     <Theme accentColor={isMale ? 'blue' : 'ruby'} radius="medium" scaling="100%">

@@ -26,6 +26,7 @@ inclusion: always
 - All buttons must have a max-width of 300px
 - Do NOT hardcode `color` prop on Radix UI `<Button>`. Let buttons inherit the theme's `accentColor` so they follow the gender-based theme automatically
 - Prefer Radix UI components over native HTML elements (e.g., use Radix `Select` instead of native `<select>`, Radix `TextArea` instead of native `<textarea>`)
+- All avatars should use square shape (border-radius: $radius-sm) by default unless explicitly specified otherwise
 
 ## Git Branch Rules
 - Do NOT write code directly on the main branch

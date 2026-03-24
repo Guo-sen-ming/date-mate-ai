@@ -103,6 +103,7 @@ export default function MomentDetail() {
 
       {/* Content */}
       <div className={styles.contentSection}>
+        {story.title && <h2 className={styles.storyTitle}>{story.title}</h2>}
         <p className={styles.text}>{story.content}</p>
         <div className={styles.contentFooter}>
           <span className={styles.timeAgo}>{timeAgo(story.createdAt)}</span>

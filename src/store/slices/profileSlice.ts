@@ -61,6 +61,7 @@ const profileSlice = createSlice({
     clearProfile(state) {
       state.profile = null
       state.error = null
+      localStorage.removeItem('userGender')
     },
   },
   extraReducers: (builder) => {
@@ -72,6 +73,10 @@ const profileSlice = createSlice({
       .addCase(fetchProfile.fulfilled, (state, action) => {
         state.loading = false
         state.profile = action.payload
+        // Persist gender for theme restoration on reload
+        if (action.payload?.gender) {
+          localStorage.setItem('userGender', action.payload.gender)
+        }
       })
       .addCase(fetchProfile.rejected, (state, action) => {
         state.loading = false
@@ -84,6 +89,10 @@ const profileSlice = createSlice({
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.updating = false
         state.profile = action.payload
+        // Persist gender in case it was updated
+        if (action.payload?.gender) {
+          localStorage.setItem('userGender', action.payload.gender)
+        }
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.updating = false

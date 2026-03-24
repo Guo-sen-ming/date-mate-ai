@@ -1,4 +1,6 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { PlusIcon } from '@radix-ui/react-icons'
 import { Skeleton } from '@radix-ui/themes'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { fetchStories, setSortMode } from '@/store/slices/momentSlice'
@@ -31,11 +33,37 @@ function SkeletonCard() {
 
 export default function StoryPage() {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+  const location = useLocation()
   const { stories, loading, sortMode } = useAppSelector((state) => state.story)
+  const [fabVisible, setFabVisible] = useState(true)
+  const lastScrollY = useRef(0)
+
+  const handleSortChange = (mode: 'latest' | 'popular') => {
+    if (mode === sortMode) return
+    dispatch(setSortMode(mode))
+  }
+
+  const handleScroll = useCallback(() => {
+    const currentY = window.scrollY
+    if (currentY > lastScrollY.current && currentY > 50) {
+      // Scrolling down
+      setFabVisible(false)
+    } else {
+      // Scrolling up
+      setFabVisible(true)
+    }
+    lastScrollY.current = currentY
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [handleScroll])
 
   useEffect(() => {
     dispatch(fetchStories())
-  }, [dispatch])
+  }, [dispatch, location.key])
 
   const sortedStories = useMemo(() => {
     const list = [...stories]
@@ -54,14 +82,14 @@ export default function StoryPage() {
           <button
             type="button"
             className={`${styles.sortTab} ${sortMode === 'latest' ? styles.active : ''}`}
-            onClick={() => dispatch(setSortMode('latest'))}
+            onClick={() => handleSortChange('latest')}
           >
             Latest
           </button>
           <button
             type="button"
             className={`${styles.sortTab} ${sortMode === 'popular' ? styles.active : ''}`}
-            onClick={() => dispatch(setSortMode('popular'))}
+            onClick={() => handleSortChange('popular')}
           >
             Popular
           </button>
@@ -83,6 +111,16 @@ export default function StoryPage() {
       {sortedStories.map((story) => (
         <MomentCard key={story.id} story={story} />
       ))}
+
+      {/* Floating create button */}
+      <button
+        type="button"
+        className={`${styles.fab} ${fabVisible ? '' : styles.fabHidden}`}
+        onClick={() => navigate('/moment/create')}
+        aria-label="Create new moment"
+      >
+        <PlusIcon width={24} height={24} />
+      </button>
     </div>
   )
 }

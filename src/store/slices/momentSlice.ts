@@ -26,6 +26,7 @@ export interface Story {
   author?: {
     displayName: string
     avatarUrl: string
+    location: string
   }
 }
 
@@ -101,6 +102,19 @@ export const addComment = createAsyncThunk(
   },
 )
 
+export const createStory = createAsyncThunk(
+  'story/create',
+  async (data: { title: string; content: string; images: string[]; location: string }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post('/stories', data)
+      return response.data
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } }
+      return rejectWithValue(err.response?.data?.message || 'Failed to create moment')
+    }
+  },
+)
+
 const storySlice = createSlice({
   name: 'story',
   initialState,
@@ -151,6 +165,9 @@ const storySlice = createSlice({
         const idx = state.stories.findIndex((s) => s.id === updated.id)
         if (idx !== -1) state.stories[idx] = updated
         if (state.currentStory?.id === updated.id) state.currentStory = updated
+      })
+      .addCase(createStory.fulfilled, (state, action) => {
+        state.stories.unshift(action.payload)
       })
   },
 })
