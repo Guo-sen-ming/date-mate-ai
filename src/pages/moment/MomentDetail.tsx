@@ -2,13 +2,17 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination } from 'swiper/modules'
-import { ChevronLeftIcon, HeartIcon, HeartFilledIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
+import { ChevronLeftIcon, HeartIcon, HeartFilledIcon, PaperPlaneIcon, DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { AlertDialog, Button } from '@radix-ui/themes'
+import ActionSheet from '@/components/ActionSheet'
+import type { ActionSheetItem } from '@/components/ActionSheet'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
   fetchStoryDetail,
   toggleLike,
   addComment,
   clearCurrentStory,
+  deleteStory,
 } from '@/store/slices/momentSlice'
 import { getAvatarUrl } from '@/lib/avatar'
 import styles from './MomentDetail.module.scss'
@@ -34,6 +38,10 @@ export default function MomentDetail() {
   const { currentStory: story, detailLoading } = useAppSelector((state) => state.story)
   const userId = useAppSelector((state) => state.auth.user?.id)
   const [commentText, setCommentText] = useState('')
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const isOwner = userId && story ? story.authorId === userId : false
 
   useEffect(() => {
     if (id) dispatch(fetchStoryDetail(id))
@@ -49,6 +57,22 @@ export default function MomentDetail() {
     dispatch(addComment({ storyId: story.id, text: commentText.trim() }))
     setCommentText('')
   }
+
+  const handleDelete = async () => {
+    if (!story) return
+    setConfirmOpen(false)
+    setDeleting(true)
+    try {
+      await dispatch(deleteStory(story.id)).unwrap()
+      navigate(-1)
+    } catch {
+      setDeleting(false)
+    }
+  }
+
+  const deleteSheetItems: ActionSheetItem[] = [
+    { label: 'Delete', danger: true, onClick: () => { setMenuOpen(false); setConfirmOpen(true) } },
+  ]
 
   const isLiked = userId && story ? story.likes.includes(userId) : false
 
@@ -82,7 +106,17 @@ export default function MomentDetail() {
           <div className={styles.topAuthorName}>{story.author?.displayName || 'Unknown'}</div>
           {story.location && <div className={styles.topMeta}>{story.location}</div>}
         </div>
+        {isOwner && (
+          <button className={styles.moreBtn} onClick={() => setMenuOpen(true)} aria-label="More options">
+            <DotsHorizontalIcon width={20} height={20} />
+          </button>
+        )}
       </div>
+
+      {/* Delete progress bar */}
+      {deleting && (
+        <div className={styles.progressBar}><div className={styles.progressTrack} /></div>
+      )}
 
       {/* Image carousel */}
       {images.length > 0 && (
@@ -172,6 +206,31 @@ export default function MomentDetail() {
           </button>
         </div>
       </div>
+
+      {/* Bottom action sheet */}
+      <ActionSheet
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        items={deleteSheetItems}
+      />
+
+      {/* Delete confirm dialog */}
+      <AlertDialog.Root open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialog.Content maxWidth="320px">
+          <AlertDialog.Title>Delete Moment</AlertDialog.Title>
+          <AlertDialog.Description size="2">
+            Are you sure you want to delete this moment? This action cannot be undone.
+          </AlertDialog.Description>
+          <div className={styles.dialogActions}>
+            <AlertDialog.Cancel>
+              <Button variant="soft" color="gray">Cancel</Button>
+            </AlertDialog.Cancel>
+            <AlertDialog.Action>
+              <Button variant="solid" color="red" onClick={handleDelete}>Delete</Button>
+            </AlertDialog.Action>
+          </div>
+        </AlertDialog.Content>
+      </AlertDialog.Root>
     </div>
   )
 }

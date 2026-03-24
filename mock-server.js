@@ -273,6 +273,27 @@ const server = createServer(async (req, res) => {
       })
     }
 
+    // DELETE /stories/:id - delete a story
+    if (method === 'DELETE' && /^\/stories\/[^/]+$/.test(path)) {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+      const userId = getUserIdFromToken(authHeader.slice(7))
+      const storyId = path.split('/')[2]
+      const db = readDb()
+      const storyIndex = (db.stories || []).findIndex((s) => s.id === storyId)
+      if (storyIndex === -1) {
+        return jsonResponse(res, 404, { message: 'Story not found' })
+      }
+      if (db.stories[storyIndex].authorId !== userId) {
+        return jsonResponse(res, 403, { message: 'Not authorized to delete this story' })
+      }
+      db.stories.splice(storyIndex, 1)
+      writeDb(db)
+      return jsonResponse(res, 200, { message: 'Story deleted' })
+    }
+
     // POST /stories/:id/comments - add comment to a story
     if (method === 'POST' && /^\/stories\/[^/]+\/comments$/.test(path)) {
       const authHeader = req.headers.authorization

@@ -1,0 +1,95 @@
+@use '../styles/variables' as *;
+
+// Full-screen overlay
+.sheet {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1001;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+.content {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: $color-bg;
+  border-radius: $radius-md $radius-md 0 0;
+  padding: $spacing-sm;
+  padding-bottom: max($spacing-md, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  animation: slideUp 0.25s ease;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  width: 100%;
+  min-height: 48px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $color-bg-secondary;
+  font-size: 16px;
+  font-weight: 500;
+  color: $color-text;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.danger {
+  color: $color-error;
+  font-weight: 600;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  border: none;
+  border-radius: $radius-sm;
+  background: $color-bg-secondary;
+  font-size: 16px;
+  font-weight: 500;
+  color: $color-text;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}

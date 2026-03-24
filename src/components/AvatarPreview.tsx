@@ -2,9 +2,9 @@ import { useRef, useState } from 'react'
 import {
   Cross1Icon,
   DotsHorizontalIcon,
-  CameraIcon,
-  DownloadIcon,
 } from '@radix-ui/react-icons'
+import ActionSheet from './ActionSheet'
+import type { ActionSheetItem } from './ActionSheet'
 import styles from './AvatarPreview.module.scss'
 
 interface AvatarPreviewProps {
@@ -29,7 +29,7 @@ export default function AvatarPreview({ src, onClose, onChangeAvatar }: AvatarPr
     e.target.value = ''
   }
 
-  const handleSaveImage = async () => {
+  const handleSaveImage = () => {
     setMenuOpen(false)
     try {
       const link = document.createElement('a')
@@ -40,6 +40,11 @@ export default function AvatarPreview({ src, onClose, onChangeAvatar }: AvatarPr
       // Silently fail if download is blocked
     }
   }
+
+  const sheetItems: ActionSheetItem[] = [
+    { label: 'Change Avatar', onClick: handleChangeAvatar },
+    { label: 'Save Image', onClick: handleSaveImage },
+  ]
 
   return (
     <div className={styles.overlay}>
@@ -76,28 +81,11 @@ export default function AvatarPreview({ src, onClose, onChangeAvatar }: AvatarPr
       />
 
       {/* Bottom sheet menu */}
-      {menuOpen && (
-        <div className={styles.bottomSheet}>
-          <div
-            className={styles.sheetBackdrop}
-            onClick={() => setMenuOpen(false)}
-            role="presentation"
-          />
-          <div className={styles.sheetContent}>
-            <button className={styles.sheetItem} onClick={handleChangeAvatar}>
-              <CameraIcon width={18} height={18} />
-              Change Avatar
-            </button>
-            <button className={styles.sheetItem} onClick={handleSaveImage}>
-              <DownloadIcon width={18} height={18} />
-              Save Image
-            </button>
-            <button className={styles.sheetCancel} onClick={() => setMenuOpen(false)}>
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+      <ActionSheet
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        items={sheetItems}
+      />
     </div>
   )
 }

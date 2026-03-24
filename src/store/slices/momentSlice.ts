@@ -115,6 +115,19 @@ export const createStory = createAsyncThunk(
   },
 )
 
+export const deleteStory = createAsyncThunk(
+  'story/delete',
+  async (storyId: string, { rejectWithValue }) => {
+    try {
+      await apiClient.delete(`/stories/${storyId}`)
+      return storyId
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } }
+      return rejectWithValue(err.response?.data?.message || 'Failed to delete moment')
+    }
+  },
+)
+
 const storySlice = createSlice({
   name: 'story',
   initialState,
@@ -168,6 +181,10 @@ const storySlice = createSlice({
       })
       .addCase(createStory.fulfilled, (state, action) => {
         state.stories.unshift(action.payload)
+      })
+      .addCase(deleteStory.fulfilled, (state, action) => {
+        state.stories = state.stories.filter((s) => s.id !== action.payload)
+        if (state.currentStory?.id === action.payload) state.currentStory = null
       })
   },
 })
