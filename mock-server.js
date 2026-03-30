@@ -97,7 +97,7 @@ const server = createServer(async (req, res) => {
         email,
         password,
         displayName: displayName || 'New User',
-        avatarUrl: `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(email)}`,
+        avatarUrl: `https://api.dicebear.com/9.x/dylan/svg?seed=${encodeURIComponent(email)}`,
         bio: '',
         gender: gender || 'male',
         birthday: '',
@@ -335,6 +335,50 @@ const server = createServer(async (req, res) => {
         author: author
           ? { displayName: author.displayName, avatarUrl: author.avatarUrl }
           : { displayName: 'Unknown', avatarUrl: '' },
+      })
+    }
+
+    // GET /danmaku - list all danmaku messages
+    if (method === 'GET' && path === '/danmaku') {
+      const db = readDb()
+      const danmakuList = (db.danmaku || []).map((d) => {
+        const user = db.users.find((u) => u.id === d.userId)
+        return {
+          ...d,
+          displayName: user?.displayName || 'Unknown',
+          avatarUrl: user?.avatarUrl || '',
+        }
+      })
+      return jsonResponse(res, 200, danmakuList)
+    }
+
+    // POST /danmaku - create a danmaku message
+    if (method === 'POST' && path === '/danmaku') {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+      const userId = getUserIdFromToken(authHeader.slice(7))
+      const { text, color } = await parseBody(req)
+      if (!text) {
+        return jsonResponse(res, 400, { message: 'Text is required' })
+      }
+      const db = readDb()
+      if (!db.danmaku) db.danmaku = []
+      const newDanmaku = {
+        id: randomUUID(),
+        userId,
+        text,
+        color: color || '#111827',
+        createdAt: new Date().toISOString(),
+      }
+      db.danmaku.push(newDanmaku)
+      writeDb(db)
+      const user = db.users.find((u) => u.id === userId)
+      return jsonResponse(res, 201, {
+        ...newDanmaku,
+        displayName: user?.displayName || 'Unknown',
+        avatarUrl: user?.avatarUrl || '',
       })
     }
 

@@ -13,8 +13,7 @@ dist-ssr
 *.local
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+.vscode/
 .idea
 .DS_Store
 *.suo
@@ -22,3 +21,21 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Kiro
+.kiro/
+
+# Project docs
+TODOLIST.md
+CLAUDE.md
+
+# Environment files
+.env.*
+!.env.example
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Coverage
+coverage/

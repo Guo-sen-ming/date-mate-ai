@@ -1,4 +1,4 @@
-const DICEBEAR_BASE = 'https://api.dicebear.com/9.x/adventurer/svg'
+const DICEBEAR_BASE = 'https://api.dicebear.com/9.x/dylan/svg'
 
 /**
  * Generate a default avatar URL using DiceBear API.
