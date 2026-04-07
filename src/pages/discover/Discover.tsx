@@ -88,7 +88,7 @@ export default function DiscoverPage() {
       ) : (
         <>
           <div className={`${styles.danmakuWrap} ${danmakuMode ? '' : styles.hidden}`}>
-            <DanmakuView users={otherUsers} danmakuList={danmakuList} />
+            <DanmakuView users={otherUsers} danmakuList={danmakuList} currentUserId={profile?.id} />
           </div>
           {!danmakuMode && (
             <ListView
@@ -154,6 +154,7 @@ export default function DiscoverPage() {
 interface DanmakuViewProps {
   users: DiscoverUser[]
   danmakuList: Danmaku[]
+  currentUserId?: string
 }
 
 interface DanmakuItem {
@@ -164,21 +165,36 @@ interface DanmakuItem {
   bio?: string
   text?: string
   color?: string
+  createdAt?: string
+  isOwn?: boolean
 }
 
-function DanmakuView({ users, danmakuList }: DanmakuViewProps) {
+function DanmakuView({ users, danmakuList, currentUserId }: DanmakuViewProps) {
   const areaRef = useRef<HTMLDivElement>(null)
-  const [areaHeight, setAreaHeight] = useState(0)
+  const [areaSize, setAreaSize] = useState({ width: 0, height: 0 })
   const goToProfile = useNavigateToProfile()
 
   useEffect(() => {
-    const updateHeight = () => {
-      if (areaRef.current) setAreaHeight(areaRef.current.clientHeight)
+    const update = () => {
+      if (areaRef.current) {
+        setAreaSize({
+          width: areaRef.current.clientWidth,
+          height: areaRef.current.clientHeight,
+        })
+      }
     }
-    updateHeight()
-    window.addEventListener('resize', updateHeight)
-    return () => window.removeEventListener('resize', updateHeight)
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
   }, [])
+
+  const nowRef = useRef(0)
+  useEffect(() => {
+    nowRef.current = new Date().getTime()
+  }, [])
+
+  // Compute current time outside useMemo to avoid ref-in-render lint error
+  const [now] = useState(() => new Date().getTime())
 
   const items: DanmakuItem[] = useMemo(() => {
     const result: DanmakuItem[] = []
@@ -192,6 +208,10 @@ function DanmakuView({ users, danmakuList }: DanmakuViewProps) {
       })
     })
     danmakuList.forEach((d) => {
+      const isOwn = d.userId === currentUserId
+      const isRecent = isOwn && d.createdAt
+        ? now - new Date(d.createdAt).getTime() < 10 * 60 * 1000
+        : false
       result.push({
         id: d.id,
         userId: d.userId,
@@ -199,47 +219,135 @@ function DanmakuView({ users, danmakuList }: DanmakuViewProps) {
         displayName: d.displayName,
         text: d.text,
         color: d.color,
+        createdAt: d.createdAt,
+        isOwn: isRecent,
       })
     })
     return result
-  }, [users, danmakuList])
+  }, [users, danmakuList, currentUserId, now])
 
   const TRACK_HEIGHT = 48
   const TOP_OFFSET = 56
-  const availableHeight = Math.max(areaHeight - TOP_OFFSET, 0)
+  const SPEED = 50 // px per second (reduced from 80)
+  const availableHeight = Math.max(areaSize.height - TOP_OFFSET, 0)
   const trackCount = Math.max(Math.floor(availableHeight / TRACK_HEIGHT), 1)
 
-  // Initialize track assignments: spread items evenly across tracks
-  const initialTrackAssign = useMemo(() => {
-    const assign: Record<string, number> = {}
-    items.forEach((item, idx) => {
-      assign[item.id] = idx % trackCount
-    })
-    return assign
-  }, [items, trackCount])
+  // JS-driven positions: itemId -> { x, track }
+  type DanmakuState = { x: number; track: number; width: number }
+  const stateRef = useRef<Record<string, DanmakuState>>({})
+  const elemsRef = useRef<Record<string, HTMLDivElement | null>>({})
+  const rafRef = useRef<number>(0)
+  const lastTimeRef = useRef<number>(0)
 
-  const [trackAssign, setTrackAssign] = useState<Record<string, number>>(initialTrackAssign)
+  // Initial top values for first render only (RAF updates top directly after)
+  const [initialTops, setInitialTops] = useState<Record<string, number>>({})
 
-  // Sync when items or trackCount changes
+  // Initialize positions when items or size changes
+  const [initialized, setInitialized] = useState(false)
+
   useEffect(() => {
-    setTrackAssign(initialTrackAssign)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items.map((i) => i.id).join(','), trackCount])
+    if (areaSize.width === 0 || items.length === 0) return
+    const tops: Record<string, number> = {}
+    items.forEach((item, idx) => {
+      if (!stateRef.current[item.id]) {
+        const startX = areaSize.width + (idx / items.length) * areaSize.width * 2
+        const track = idx % trackCount
+        stateRef.current[item.id] = { x: startX, track, width: 200 }
+        tops[item.id] = TOP_OFFSET + track * TRACK_HEIGHT
+      } else {
+        tops[item.id] = TOP_OFFSET + stateRef.current[item.id].track * TRACK_HEIGHT
+      }
+    })
+    // Defer setState to avoid synchronous setState-in-effect warning
+    const id = setTimeout(() => {
+      setInitialTops(tops)
+      setInitialized(true)
+    }, 0)
+    return () => clearTimeout(id)
+  }, [items, areaSize.width, trackCount])
 
-  // On each animation cycle end, pick a random track for that item
-  const handleIteration = useCallback(
-    (itemId: string) => {
-      setTrackAssign((prev) => ({
-        ...prev,
-        [itemId]: Math.floor(Math.random() * trackCount),
-      }))
-    },
-    [trackCount],
-  )
+  // Animation loop - directly manipulates DOM for both transform and top
+  useEffect(() => {
+    if (areaSize.width === 0 || !initialized) return
 
-  // Each item gets a staggered negative delay based on its index
-  // so items on the same track don't start at the same time
-  const DURATION = 16
+    const GAP = 20 // minimum gap between danmaku on the same track (px)
+
+    const tick = (time: number) => {
+      const dt = lastTimeRef.current ? (time - lastTimeRef.current) / 1000 : 0
+      lastTimeRef.current = time
+
+      // Build track map: track -> items sorted by x descending (rightmost first)
+      const trackItems: Record<number, Array<{ id: string; state: DanmakuState }>> = {}
+      Object.entries(stateRef.current).forEach(([id, state]) => {
+        if (!trackItems[state.track]) trackItems[state.track] = []
+        trackItems[state.track].push({ id, state })
+      })
+      Object.values(trackItems).forEach((arr) =>
+        arr.sort((a, b) => b.state.x - a.state.x),
+      )
+
+      Object.entries(stateRef.current).forEach(([id, state]) => {
+        const el = elemsRef.current[id]
+        if (!el) return
+
+        const actualWidth = el.offsetWidth
+        if (actualWidth > 0) state.width = actualWidth
+
+        // Check if this item has gone off-screen left
+        if (state.x + state.width < -20) {
+          // Pick a random track
+          const newTrack = Math.floor(Math.random() * trackCount)
+          state.track = newTrack
+
+          // Find the rightmost item on the new track (excluding self)
+          const sameTrack = (trackItems[newTrack] || []).filter((t) => t.id !== id)
+          const rightmost = sameTrack.length > 0 ? sameTrack[0] : null
+
+          if (rightmost) {
+            // Place self to the right of the rightmost item with gap
+            state.x = Math.max(
+              areaSize.width + 20,
+              rightmost.state.x + rightmost.state.width + GAP,
+            )
+          } else {
+            state.x = areaSize.width + 20
+          }
+
+          el.style.top = `${TOP_OFFSET + state.track * TRACK_HEIGHT}px`
+          // Rebuild track map entry for new track
+          if (!trackItems[newTrack]) trackItems[newTrack] = []
+          trackItems[newTrack].push({ id, state })
+          trackItems[newTrack].sort((a, b) => b.state.x - a.state.x)
+        }
+
+        // Collision: find the item directly ahead (to the right) on same track
+        const trackArr = trackItems[state.track] || []
+        const myIdx = trackArr.findIndex((t) => t.id === id)
+        const ahead = myIdx > 0 ? trackArr[myIdx - 1] : null
+
+        let moveX = SPEED * dt
+        if (ahead) {
+          const gap = ahead.state.x - (state.x + state.width)
+          if (gap <= GAP) {
+            // Match speed of item ahead (which is also being slowed or stopped)
+            moveX = Math.min(moveX, Math.max(0, gap - GAP + SPEED * dt))
+            if (gap < GAP) {
+              // Push self back to maintain gap
+              state.x = ahead.state.x - state.width - GAP
+            }
+          }
+        }
+
+        state.x -= moveX
+        el.style.transform = `translateX(${state.x - areaSize.width}px)`
+      })
+
+      rafRef.current = requestAnimationFrame(tick)
+    }
+
+    rafRef.current = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [areaSize.width, trackCount, initialized])
 
   if (items.length === 0) {
     return (
@@ -253,24 +361,23 @@ function DanmakuView({ users, danmakuList }: DanmakuViewProps) {
 
   return (
     <div className={styles.danmakuArea} ref={areaRef}>
-      {areaHeight > 0 &&
-        items.map((item, idx) => {
-          const track = trackAssign[item.id]
-          if (track === undefined) return null
-          // Stagger each item across the full duration cycle
-          const delay = -((idx / items.length) * DURATION)
+      {initialized &&
+        items.map((item) => {
+          const top = initialTops[item.id]
+          if (top === undefined) return null
+
+          const isRecent = item.isOwn ?? false
 
           return (
             <div
               key={item.id}
-              className={styles.danmakuTrack}
+              ref={(el) => { elemsRef.current[item.id] = el }}
+              className={`${styles.danmakuTrack} ${isRecent ? styles.ownDanmaku : ''}`}
               style={{
-                top: `${TOP_OFFSET + track * TRACK_HEIGHT}px`,
-                animationDuration: `${DURATION}s`,
-                animationDelay: `${delay}s`,
+                top: `${top}px`,
+                left: `${areaSize.width}px`,
               }}
               onClick={() => goToProfile(item.userId)}
-              onAnimationIteration={() => handleIteration(item.id)}
               role="button"
               tabIndex={0}
             >

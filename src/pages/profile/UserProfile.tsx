@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, startTransition } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Badge, Skeleton, Button } from '@radix-ui/themes'
 import { ChevronLeftIcon, HeartFilledIcon, ChatBubbleIcon, HomeIcon, PersonIcon, BackpackIcon } from '@radix-ui/react-icons'
@@ -44,10 +44,14 @@ export default function UserProfilePage() {
   const [stories, setStories] = useState<Story[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [scrolled, setScrolled] = useState(false)
+
+  const heroRef = useRef<HTMLDivElement>(null)
+
 
   useEffect(() => {
     if (!id) return
-    setLoading(true)
+    startTransition(() => setLoading(true))
     Promise.all([
       apiClient.get(`/users/${id}`),
       apiClient.get(`/users/${id}/stories`),
@@ -60,17 +64,28 @@ export default function UserProfilePage() {
       .finally(() => setLoading(false))
   }, [id])
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop
+      setScrolled(scrollY > 10)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [user])
+
   const isLiked = id ? likedIds.includes(id) : false
   const isFemale = user?.gender === 'female'
   const genderLabel = isFemale ? 'Ms.' : user?.gender === 'male' ? 'Mr.' : ''
 
   return (
     <div className={styles.page}>
-      {/* Top bar */}
-      <div className={styles.topBar}>
+      {/* Sticky top bar - visible only when scrolled */}
+      <div className={`${styles.topBar} ${scrolled ? styles.topBarVisible : ''}`}>
         <button className={styles.backBtn} onClick={() => navigate(-1)} aria-label="Go back">
           <ChevronLeftIcon width={24} height={24} />
         </button>
+        <span className={styles.topBarTitle}>{user?.displayName ?? ''}</span>
       </div>
 
       {loading && (
@@ -92,8 +107,19 @@ export default function UserProfilePage() {
 
       {!loading && user && (
         <>
-          {/* Hero banner */}
-          <div className={`${styles.hero} ${isFemale ? styles.female : styles.male}`}>
+          {/* Hero banner with floating back button */}
+          <div
+            ref={heroRef}
+            className={`${styles.hero} ${isFemale ? styles.female : styles.male}`}
+          >
+            {/* White back button on hero - hidden when scrolled */}
+            <button
+              className={`${styles.heroBackBtn} ${scrolled ? styles.heroBackBtnHidden : ''}`}
+              onClick={() => navigate(-1)}
+              aria-label="Go back"
+            >
+              <ChevronLeftIcon width={24} height={24} />
+            </button>
             <img
               src={getAvatarUrl(user.avatarUrl, '')}
               alt={user.displayName}

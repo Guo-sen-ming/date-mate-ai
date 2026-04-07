@@ -18,6 +18,7 @@ export interface Danmaku {
   avatarUrl: string
   text: string
   color: string
+  createdAt: string
 }
 
 interface DiscoverState {

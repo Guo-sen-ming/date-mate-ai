@@ -7,15 +7,44 @@
   background: $color-bg;
 }
 
-/* Top bar */
+/* Sticky top bar - hidden by default, shown when scrolled */
 .topBar {
   display: flex;
   align-items: center;
+  gap: $spacing-sm;
   padding: $spacing-sm $spacing-md;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
+  max-width: 480px;
+  margin: 0 auto;
   background: $color-bg;
-  z-index: 10;
+  z-index: 100;
+  border-bottom: 1px solid $color-border;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.topBarVisible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.topBarTitle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+  color: $color-text;
+  pointer-events: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 56px;
 }
 
 .backBtn {
@@ -44,6 +73,7 @@
   align-items: flex-end;
   justify-content: flex-start;
   padding: 0 $spacing-lg $spacing-lg;
+  position: relative;
 
   &.male {
     background: linear-gradient(160deg, #3b82f6 0%, #93c5fd 100%);
@@ -52,6 +82,33 @@
   &.female {
     background: linear-gradient(160deg, #ec4899 0%, #f9a8d4 100%);
   }
+}
+
+/* White back button on hero */
+.heroBackBtn {
+  position: absolute;
+  top: $spacing-sm;
+  left: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.2s ease;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.heroBackBtnHidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .avatar {
