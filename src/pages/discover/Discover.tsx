@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
+import { useNavigateToProfile } from '@/lib/navigation'
 import { Switch, Skeleton, IconButton } from '@radix-ui/themes'
 import { PaperPlaneIcon, HeartFilledIcon, Cross2Icon } from '@radix-ui/react-icons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
@@ -157,6 +158,7 @@ interface DanmakuViewProps {
 
 interface DanmakuItem {
   id: string
+  userId: string
   avatarUrl: string
   displayName: string
   bio?: string
@@ -167,14 +169,11 @@ interface DanmakuItem {
 function DanmakuView({ users, danmakuList }: DanmakuViewProps) {
   const areaRef = useRef<HTMLDivElement>(null)
   const [areaHeight, setAreaHeight] = useState(0)
-  const [trackMap, setTrackMap] = useState<Record<string, number>>({})
-  const [ready, setReady] = useState(false)
+  const goToProfile = useNavigateToProfile()
 
   useEffect(() => {
     const updateHeight = () => {
-      if (areaRef.current) {
-        setAreaHeight(areaRef.current.clientHeight)
-      }
+      if (areaRef.current) setAreaHeight(areaRef.current.clientHeight)
     }
     updateHeight()
     window.addEventListener('resize', updateHeight)
@@ -186,6 +185,7 @@ function DanmakuView({ users, danmakuList }: DanmakuViewProps) {
     users.forEach((u) => {
       result.push({
         id: `u-${u.id}`,
+        userId: u.id,
         avatarUrl: u.avatarUrl,
         displayName: u.displayName,
         bio: u.bio || undefined,
@@ -194,6 +194,7 @@ function DanmakuView({ users, danmakuList }: DanmakuViewProps) {
     danmakuList.forEach((d) => {
       result.push({
         id: d.id,
+        userId: d.userId,
         avatarUrl: d.avatarUrl,
         displayName: d.displayName,
         text: d.text,
@@ -208,62 +209,37 @@ function DanmakuView({ users, danmakuList }: DanmakuViewProps) {
   const availableHeight = Math.max(areaHeight - TOP_OFFSET, 0)
   const trackCount = Math.max(Math.floor(availableHeight / TRACK_HEIGHT), 1)
 
-  // Assign tracks for new items
-  const itemIds = useMemo(() => items.map((i) => i.id).join(','), [items])
-  useEffect(() => {
-    if (areaHeight === 0 || items.length === 0) return
-
-    setTrackMap((prev) => {
-      const next = { ...prev }
-      const usedTracks = new Set(Object.values(next))
-      let changed = false
-
-      items.forEach((item) => {
-        if (next[item.id] === undefined) {
-          let track = Math.floor(Math.random() * trackCount)
-          for (let i = 0; i < trackCount; i++) {
-            const candidate = (track + i) % trackCount
-            if (!usedTracks.has(candidate)) {
-              track = candidate
-              break
-            }
-          }
-          next[item.id] = track
-          usedTracks.add(track)
-          changed = true
-        }
-      })
-
-      if (changed) {
-        // Mark ready after first assignment
-        requestAnimationFrame(() => setReady(true))
-      }
-      return changed ? next : prev
+  // Initialize track assignments: spread items evenly across tracks
+  const initialTrackAssign = useMemo(() => {
+    const assign: Record<string, number> = {}
+    items.forEach((item, idx) => {
+      assign[item.id] = idx % trackCount
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itemIds, trackCount, areaHeight])
+    return assign
+  }, [items, trackCount])
 
-  const handleAnimationIteration = useCallback(
+  const [trackAssign, setTrackAssign] = useState<Record<string, number>>(initialTrackAssign)
+
+  // Sync when items or trackCount changes
+  useEffect(() => {
+    setTrackAssign(initialTrackAssign)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items.map((i) => i.id).join(','), trackCount])
+
+  // On each animation cycle end, pick a random track for that item
+  const handleIteration = useCallback(
     (itemId: string) => {
-      setTrackMap((prev) => {
-        const currentTracks = new Set(
-          Object.entries(prev)
-            .filter(([id]) => id !== itemId)
-            .map(([, t]) => t),
-        )
-        let newTrack = Math.floor(Math.random() * trackCount)
-        for (let i = 0; i < trackCount; i++) {
-          const candidate = (newTrack + i) % trackCount
-          if (!currentTracks.has(candidate)) {
-            newTrack = candidate
-            break
-          }
-        }
-        return { ...prev, [itemId]: newTrack }
-      })
+      setTrackAssign((prev) => ({
+        ...prev,
+        [itemId]: Math.floor(Math.random() * trackCount),
+      }))
     },
     [trackCount],
   )
+
+  // Each item gets a staggered negative delay based on its index
+  // so items on the same track don't start at the same time
+  const DURATION = 16
 
   if (items.length === 0) {
     return (
@@ -277,18 +253,12 @@ function DanmakuView({ users, danmakuList }: DanmakuViewProps) {
 
   return (
     <div className={styles.danmakuArea} ref={areaRef}>
-      {!ready && items.length > 0 && (
-        <div className={styles.emptyState}>
-          <span>Loading...</span>
-        </div>
-      )}
-      {ready &&
-        items.map((item) => {
-          const track = trackMap[item.id]
+      {areaHeight > 0 &&
+        items.map((item, idx) => {
+          const track = trackAssign[item.id]
           if (track === undefined) return null
-          const hash = item.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
-          const duration = 10 + (hash % 8) * 1.5
-          const initialDelay = (hash % 6) * 1.5
+          // Stagger each item across the full duration cycle
+          const delay = -((idx / items.length) * DURATION)
 
           return (
             <div
@@ -296,10 +266,13 @@ function DanmakuView({ users, danmakuList }: DanmakuViewProps) {
               className={styles.danmakuTrack}
               style={{
                 top: `${TOP_OFFSET + track * TRACK_HEIGHT}px`,
-                animationDuration: `${duration}s`,
-                animationDelay: `${initialDelay}s`,
+                animationDuration: `${DURATION}s`,
+                animationDelay: `${delay}s`,
               }}
-              onAnimationIteration={() => handleAnimationIteration(item.id)}
+              onClick={() => goToProfile(item.userId)}
+              onAnimationIteration={() => handleIteration(item.id)}
+              role="button"
+              tabIndex={0}
             >
               <img
                 className={styles.danmakuAvatar}
@@ -332,6 +305,8 @@ interface ListViewProps {
 }
 
 function ListView({ users, likedIds, dislikedIds, onLike, onDislike }: ListViewProps) {
+  const goToProfile = useNavigateToProfile()
+
   if (users.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -351,6 +326,9 @@ function ListView({ users, likedIds, dislikedIds, onLike, onDislike }: ListViewP
           <div
             key={user.id}
             className={`${styles.userCard} ${genderClass} ${isDisliked ? styles.disliked : ''}`}
+            onClick={() => goToProfile(user.id)}
+            role="button"
+            tabIndex={0}
           >
             <img
               className={styles.cardAvatar}
@@ -365,14 +343,14 @@ function ListView({ users, likedIds, dislikedIds, onLike, onDislike }: ListViewP
             <div className={styles.cardActions}>
               <button
                 className={`${styles.likeBtn} ${isLiked ? styles.liked : ''}`}
-                onClick={() => onLike(user.id)}
+                onClick={(e) => { e.stopPropagation(); onLike(user.id) }}
                 aria-label={`Like ${user.displayName}`}
               >
                 <HeartFilledIcon width={20} height={20} />
               </button>
               <button
                 className={`${styles.dislikeBtn} ${isDisliked ? styles.disliked : ''}`}
-                onClick={() => onDislike(user.id)}
+                onClick={(e) => { e.stopPropagation(); onDislike(user.id) }}
                 aria-label={`Dislike ${user.displayName}`}
               >
                 <Cross2Icon width={20} height={20} />

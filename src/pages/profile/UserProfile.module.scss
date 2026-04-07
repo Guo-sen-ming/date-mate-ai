@@ -1,0 +1,248 @@
+@use '../../styles/variables' as *;
+
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: $color-bg;
+}
+
+/* Top bar */
+.topBar {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  position: sticky;
+  top: 0;
+  background: $color-bg;
+  z-index: 10;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  margin-left: -12px;
+  color: $color-text;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+/* Hero banner */
+.hero {
+  width: 100%;
+  height: 160px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 0 $spacing-lg $spacing-lg;
+
+  &.male {
+    background: linear-gradient(160deg, #3b82f6 0%, #93c5fd 100%);
+  }
+
+  &.female {
+    background: linear-gradient(160deg, #ec4899 0%, #f9a8d4 100%);
+  }
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: $radius-md;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: $shadow-card;
+}
+
+/* Body */
+.body {
+  padding: $spacing-md $spacing-lg $spacing-lg;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: 6px;
+}
+
+.name {
+  font-size: 22px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+.bio {
+  font-size: 14px;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  margin-bottom: $spacing-md;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Tags */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: $color-text-secondary;
+  background: $color-bg-secondary;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.actionBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 48px;
+  border-radius: $radius-md;
+  border: 1.5px solid $color-border;
+  background: $color-bg;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  color: $color-text-secondary;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.likeBtn {
+  &.liked {
+    color: #ef4444;
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.06);
+  }
+}
+
+.messageBtn {
+  &:active {
+    background: $color-bg-secondary;
+  }
+}
+
+/* Moments section */
+.momentsSection {
+  border-top: 1px solid $color-border;
+  padding: $spacing-md $spacing-lg;
+  padding-bottom: $spacing-3xl;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+  margin-bottom: $spacing-md;
+}
+
+.momentList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: $color-border;
+  border-radius: $radius-md;
+  overflow: hidden;
+}
+
+.momentItem {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.1s ease;
+
+  &:active {
+    background: $color-bg-secondary;
+  }
+}
+
+.momentThumb {
+  width: 64px;
+  height: 64px;
+  border-radius: $radius-sm;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.momentInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+
+.momentTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: $color-text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.momentContent {
+  font-size: 13px;
+  color: $color-text-secondary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.momentTime {
+  font-size: 12px;
+  color: $color-text-muted;
+}
+
+/* Skeleton */
+.skeletonBody {
+  padding: $spacing-md $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+/* Error state */
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+  padding: $spacing-3xl $spacing-md;
+  color: $color-text-secondary;
+  font-size: 14px;
+}

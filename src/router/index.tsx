@@ -15,6 +15,7 @@ import SettingsPage from '@/pages/profile/Settings'
 import MomentPage from '@/pages/moment/Moment'
 import MomentDetailPage from '@/pages/moment/MomentDetail'
 import MomentCreatePage from '@/pages/moment/MomentCreate'
+import UserProfilePage from '@/pages/profile/UserProfile'
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
       },
       { path: 'profile/edit', element: <ProfileEditPage /> },
       { path: 'profile/settings', element: <SettingsPage /> },
+      { path: 'users/:id', element: <UserProfilePage /> },
       { path: 'moment/:id', element: <MomentDetailPage /> },
       { path: 'moment/create', element: <MomentCreatePage /> },
     ],

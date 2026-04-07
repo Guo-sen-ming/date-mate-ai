@@ -161,6 +161,36 @@ const server = createServer(async (req, res) => {
       return jsonResponse(res, 200, safeUser)
     }
 
+    // GET /users/:id/stories - get stories by a specific user
+    if (method === 'GET' && /^\/users\/[^/]+\/stories$/.test(path)) {
+      const userId = path.split('/')[2]
+      const db = readDb()
+      const stories = (db.stories || [])
+        .filter((s) => s.authorId === userId)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .map((story) => {
+          const author = db.users.find((u) => u.id === story.authorId)
+          return {
+            ...story,
+            author: author
+              ? { displayName: author.displayName, avatarUrl: author.avatarUrl, location: author.location || '' }
+              : { displayName: 'Unknown', avatarUrl: '', location: '' },
+          }
+        })
+      return jsonResponse(res, 200, stories)
+    }
+
+    // GET /users/:id - get a specific user profile (public info only)
+    if (method === 'GET' && /^\/users\/[^/]+$/.test(path)) {      const userId = path.split('/')[2]
+      const db = readDb()
+      const user = db.users.find((u) => u.id === userId)
+      if (!user) {
+        return jsonResponse(res, 404, { message: 'User not found' })
+      }
+      const { password: _, email: __, ...publicUser } = user
+      return jsonResponse(res, 200, publicUser)
+    }
+
     // GET /users - list all users
     if (method === 'GET' && path === '/users') {
       const db = readDb()

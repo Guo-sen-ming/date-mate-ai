@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { getAvatarUrl } from '@/lib/avatar'
 import ImagePreview from '@/components/ImagePreview'
 import styles from './MomentCard.module.scss'
+import { useNavigateToProfile } from '@/lib/navigation'
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime()
@@ -31,6 +32,7 @@ export default function StoryCard({ story }: Props) {
   const isLiked = userId ? story.likes.includes(userId) : false
   const images = story.images || []
   const [previewIndex, setPreviewIndex] = useState<number | null>(null)
+  const goToProfile = useNavigateToProfile()
 
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -94,7 +96,12 @@ export default function StoryCard({ story }: Props) {
   return (
     <article className={styles.card} onClick={() => navigate(`/moment/${story.id}`)}>
       <div className={styles.cardHeader}>
-        <img src={avatarSrc} alt="" className={styles.avatar} />
+        <img
+          src={avatarSrc}
+          alt=""
+          className={styles.avatar}
+          onClick={(e) => { e.stopPropagation(); goToProfile(story.authorId) }}
+        />
         <div className={styles.authorInfo}>
           <div className={styles.authorName}>
             {story.author?.displayName || 'Unknown'}
