@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Skeleton } from '@radix-ui/themes'
+import { BellIcon } from '@radix-ui/react-icons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { fetchConversations } from '@/store/slices/chatSlice'
 import { useChatSocket } from '@/lib/useChat'
@@ -8,13 +9,21 @@ import { getAvatarUrl } from '@/lib/avatar'
 import styles from './Messages.module.scss'
 
 function timeLabel(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 1) return 'just now'
-  if (mins < 60) return `${mins}m`
-  const hours = Math.floor(mins / 60)
-  if (hours < 24) return `${hours}h`
-  return new Date(dateStr).toLocaleDateString()
+  const date = new Date(dateStr)
+  const now = new Date()
+  const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+
+  const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+  const nowOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const diffDays = Math.round((nowOnly.getTime() - dateOnly.getTime()) / (1000 * 60 * 60 * 24))
+
+  if (diffDays === 0) return timeStr
+  if (diffDays === 1) return 'Yesterday'
+  if (diffDays < 7) return date.toLocaleDateString('en-US', { weekday: 'short' })
+  if (date.getFullYear() === now.getFullYear()) {
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
 export default function MessagesPage() {
@@ -27,67 +36,89 @@ export default function MessagesPage() {
     dispatch(fetchConversations())
   }, [dispatch])
 
+  const totalUnread = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0)
+
   return (
     <div className={styles.page}>
+      {/* Header */}
       <div className={styles.header}>
-        <h1 className={styles.title}>Messages</h1>
+        <div className={styles.headerLeft}>
+          <h1 className={styles.title}>Messages</h1>
+          {totalUnread > 0 && (
+            <span className={styles.totalBadge}>{totalUnread > 99 ? '99+' : totalUnread}</span>
+          )}
+        </div>
+        <button className={styles.bellBtn} onClick={() => navigate('/notifications')} aria-label="Notifications">
+          <BellIcon width={22} height={22} />
+        </button>
       </div>
 
+      {/* Skeleton */}
       {loading && (
         <div className={styles.list}>
           {[1, 2, 3].map((i) => (
-            <div key={i} className={styles.item}>
-              <Skeleton width="48px" height="48px" />
-              <div className={styles.itemBody}>
+            <div key={i} className={styles.skeletonItem}>
+              <Skeleton width="56px" height="56px" style={{ borderRadius: 12 }} />
+              <div className={styles.skeletonBody}>
                 <Skeleton width="100px" height="15px" />
-                <Skeleton width="160px" height="13px" style={{ marginTop: 4 }} />
+                <Skeleton width="160px" height="13px" style={{ marginTop: 6 }} />
               </div>
             </div>
           ))}
         </div>
       )}
 
+      {/* Empty */}
       {!loading && conversations.length === 0 && (
         <div className={styles.empty}>
-          <p>No conversations yet</p>
-          <p className={styles.emptyHint}>Go to Discover and message someone!</p>
+          <div className={styles.emptyIcon}>💬</div>
+          <p className={styles.emptyTitle}>No messages yet</p>
+          <p className={styles.emptyHint}>Discover someone and start a conversation</p>
         </div>
       )}
 
+      {/* List */}
       {!loading && conversations.length > 0 && (
         <div className={styles.list}>
-          {conversations.map((conv) => (
-            <div
-              key={conv.id}
-              className={styles.item}
-              onClick={() => navigate(`/messages/${conv.id}`)}
-              role="button"
-              tabIndex={0}
-            >
-              <div className={styles.avatarWrap}>
-                <img
-                  src={getAvatarUrl(conv.other?.avatarUrl ?? '', '')}
-                  alt={conv.other?.displayName ?? ''}
-                  className={styles.avatar}
-                  loading="lazy"
-                />
-                {conv.unreadCount > 0 && (
-                  <span className={styles.badge}>{conv.unreadCount > 99 ? '99+' : conv.unreadCount}</span>
-                )}
-              </div>
-              <div className={styles.itemBody}>
-                <div className={styles.itemTop}>
-                  <span className={styles.name}>{conv.other?.displayName ?? 'Unknown'}</span>
-                  {conv.lastMessage && (
-                    <span className={styles.time}>{timeLabel(conv.lastMessage.createdAt)}</span>
+          {conversations.map((conv) => {
+            const hasUnread = (conv.unreadCount ?? 0) > 0
+            return (
+              <div
+                key={conv.id}
+                className={styles.item}
+                onClick={() => navigate(`/messages/${conv.id}`)}
+                role="button"
+                tabIndex={0}
+              >
+                <div className={styles.avatarWrap}>
+                  <img
+                    src={getAvatarUrl(conv.other?.avatarUrl ?? '', '')}
+                    alt={conv.other?.displayName ?? ''}
+                    className={styles.avatar}
+                    loading="lazy"
+                  />
+                  {hasUnread && (
+                    <span className={styles.badge}>
+                      {conv.unreadCount > 99 ? '99+' : conv.unreadCount}
+                    </span>
                   )}
                 </div>
-                <p className={styles.preview}>
-                  {conv.lastMessage?.text ?? 'No messages yet'}
-                </p>
+                <div className={styles.itemBody}>
+                  <div className={styles.itemTop}>
+                    <span className={`${styles.name} ${hasUnread ? styles.nameBold : ''}`}>
+                      {conv.other?.displayName ?? 'Unknown'}
+                    </span>
+                    {conv.lastMessage && (
+                      <span className={styles.time}>{timeLabel(conv.lastMessage.createdAt)}</span>
+                    )}
+                  </div>
+                  <p className={`${styles.preview} ${hasUnread ? styles.previewBold : ''}`}>
+                    {conv.lastMessage?.text ?? 'No messages yet'}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

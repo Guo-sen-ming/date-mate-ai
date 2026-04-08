@@ -5,6 +5,7 @@ import { ChevronLeftIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { fetchMessages, markConvRead, setActiveConv } from '@/store/slices/chatSlice'
 import { useChatSocket } from '@/lib/useChat'
+import { useNavigateToProfile } from '@/lib/navigation'
 import { getAvatarUrl } from '@/lib/avatar'
 import styles from './Chat.module.scss'
 
@@ -12,11 +13,44 @@ function formatTime(dateStr: string): string {
   return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
+const FIVE_MINUTES = 5 * 60 * 1000
+
+function formatMsgTime(dateStr: string): string {
+  const date = new Date(dateStr)
+  const now = new Date()
+  const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+
+  // Compare calendar dates, not time difference
+  const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+  const nowOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const diffDays = Math.round((nowOnly.getTime() - dateOnly.getTime()) / (1000 * 60 * 60 * 24))
+
+  const isThisYear = date.getFullYear() === now.getFullYear()
+  const yearPrefix = isThisYear ? '' : `${date.getFullYear()} `
+
+  if (diffDays === 0) return timeStr
+  if (diffDays === 1) return `${yearPrefix}Yesterday ${timeStr}`
+  if (diffDays < 7) {
+    const day = date.toLocaleDateString('en-US', { weekday: 'short' })
+    return `${yearPrefix}${day} ${timeStr}`
+  }
+  const dateLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  return `${yearPrefix}${dateLabel} ${timeStr}`
+}
+
+function shouldShowTime(messages: { createdAt: string }[], index: number): boolean {
+  if (index === 0) return true
+  const curr = new Date(messages[index].createdAt).getTime()
+  const prev = new Date(messages[index - 1].createdAt).getTime()
+  return curr - prev > FIVE_MINUTES
+}
+
 export default function ChatPage() {
   const { id: convId } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { sendMessage } = useChatSocket()
+  const goToProfile = useNavigateToProfile()
 
   const currentUserId = useAppSelector((s) => s.auth.user?.id)
   const conv = useAppSelector((s) => s.chat.conversations.find((c) => c.id === convId))
@@ -63,6 +97,8 @@ export default function ChatPage() {
             src={getAvatarUrl(conv.other.avatarUrl, '')}
             alt={conv.other.displayName}
             className={styles.headerAvatar}
+            onClick={() => goToProfile(conv.other!.id)}
+            role="button"
           />
         )}
         <span className={styles.headerName}>{conv?.other?.displayName ?? 'Chat'}</span>
@@ -70,13 +106,20 @@ export default function ChatPage() {
 
       {/* Messages */}
       <div className={styles.messageList}>
-        {messages.map((msg) => {
+        {messages.map((msg, idx) => {
           const isOwn = msg.senderId === currentUserId
+          const showTime = shouldShowTime(messages, idx)
           return (
-            <div key={msg.id} className={`${styles.msgRow} ${isOwn ? styles.own : styles.other}`}>
-              <div className={`${styles.bubble} ${isOwn ? styles.ownBubble : styles.otherBubble}`}>
-                <p className={styles.msgText}>{msg.text}</p>
-                <span className={styles.msgTime}>{formatTime(msg.createdAt)}</span>
+            <div key={msg.id}>
+              {showTime && (
+                <div className={styles.timeDivider}>
+                  {formatMsgTime(msg.createdAt)}
+                </div>
+              )}
+              <div className={`${styles.msgRow} ${isOwn ? styles.own : styles.other}`}>
+                <div className={`${styles.bubble} ${isOwn ? styles.ownBubble : styles.otherBubble}`}>
+                  <p className={styles.msgText}>{msg.text}</p>
+                </div>
               </div>
             </div>
           )

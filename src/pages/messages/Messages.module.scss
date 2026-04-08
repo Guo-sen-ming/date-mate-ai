@@ -1,39 +1,89 @@
-@use '../common.module.scss' as *;
 @use '../../styles/variables' as *;
 
 .page {
   max-width: 480px;
   margin: 0 auto;
-  min-height: 100dvh;
-  background: $color-bg;
+  background: $color-bg-secondary;
 }
 
+/* Header */
 .header {
-  padding: $spacing-lg $spacing-md $spacing-sm;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg $spacing-md $spacing-md;
+  background: $color-bg-secondary;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
 }
 
 .title {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
   color: $color-text;
+  letter-spacing: -0.5px;
 }
 
+.totalBadge {
+  background: #ef4444;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+}
+
+.bellBtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: $color-bg;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: $color-text;
+  box-shadow: $shadow-sm;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+/* List */
 .list {
   display: flex;
   flex-direction: column;
+  padding: 0 $spacing-md;
+  gap: $spacing-md;
 }
 
 .item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: $spacing-md;
   padding: $spacing-md;
+  border-radius: $radius-lg;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.1s ease;
-  border-bottom: 1px solid $color-border;
+  background: $color-bg;
+  box-shadow: $shadow-sm;
+  transition: box-shadow 0.15s ease;
 
   &:active {
+    box-shadow: none;
     background: $color-bg-secondary;
   }
 }
@@ -44,27 +94,27 @@
 }
 
 .avatar {
-  width: 52px;
-  height: 52px;
-  border-radius: $radius-sm;
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-md;
   object-fit: cover;
 }
 
 .badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  min-width: 18px;
-  height: 18px;
+  top: -5px;
+  right: -5px;
+  min-width: 20px;
+  height: 20px;
   border-radius: 999px;
   background: #ef4444;
   color: #fff;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
+  padding: 0 5px;
   border: 2px solid $color-bg;
 }
 
@@ -82,8 +132,12 @@
 
 .name {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   color: $color-text;
+}
+
+.nameBold {
+  font-weight: 700;
 }
 
 .time {
@@ -94,12 +148,36 @@
 
 .preview {
   font-size: 14px;
-  color: $color-text-secondary;
+  color: $color-text-muted;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.previewBold {
+  color: $color-text-secondary;
+  font-weight: 500;
+}
+
+/* Skeleton */
+.skeletonItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+}
+
+.skeletonBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Empty */
 .empty {
   display: flex;
   flex-direction: column;
@@ -107,11 +185,21 @@
   justify-content: center;
   padding: $spacing-3xl $spacing-md;
   gap: $spacing-sm;
-  color: $color-text-secondary;
-  font-size: 15px;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: $spacing-sm;
+}
+
+.emptyTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: $color-text;
 }
 
 .emptyHint {
-  font-size: 13px;
+  font-size: 14px;
   color: $color-text-muted;
+  text-align: center;
 }

@@ -199,6 +199,8 @@ function DanmakuView({ users, danmakuList, currentUserId }: DanmakuViewProps) {
   const items: DanmakuItem[] = useMemo(() => {
     const result: DanmakuItem[] = []
     users.forEach((u) => {
+      // Only show users with bio or location as danmaku
+      if (!u.bio && !u.location) return
       result.push({
         id: `u-${u.id}`,
         userId: u.id,
@@ -228,8 +230,9 @@ function DanmakuView({ users, danmakuList, currentUserId }: DanmakuViewProps) {
 
   const TRACK_HEIGHT = 48
   const TOP_OFFSET = 56
+  const BOTTOM_OFFSET = 16 // safety margin from bottom
   const SPEED = 50 // px per second (reduced from 80)
-  const availableHeight = Math.max(areaSize.height - TOP_OFFSET, 0)
+  const availableHeight = Math.max(areaSize.height - TOP_OFFSET - BOTTOM_OFFSET, 0)
   const trackCount = Math.max(Math.floor(availableHeight / TRACK_HEIGHT), 1)
 
   // JS-driven positions: itemId -> { x, track }

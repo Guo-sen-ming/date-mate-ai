@@ -83,6 +83,17 @@
   line-height: 1;
 }
 
+.unreadDot {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 2px solid $color-bg;
+}
+
 // Hide on tablet and desktop
 @media (min-width: $breakpoint-md) {
   .nav {

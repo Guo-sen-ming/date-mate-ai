@@ -6,6 +6,7 @@ import {
   BookmarkIcon,
   PersonIcon,
 } from '@radix-ui/react-icons'
+import { useAppSelector } from '@/store/hooks'
 import styles from './BottomNav.module.scss'
 
 const tabs = [
@@ -19,12 +20,16 @@ const tabs = [
 export default function BottomNav() {
   const location = useLocation()
   const navigate = useNavigate()
+  const totalUnread = useAppSelector((s) =>
+    s.chat.conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0),
+  )
 
   return (
     <nav className={styles.nav}>
       <div className={styles.inner}>
         {tabs.map((tab) => {
           const isActive = location.pathname === tab.path
+          const showDot = tab.path === '/messages' && totalUnread > 0
           return (
             <button
               key={tab.path}
@@ -36,6 +41,7 @@ export default function BottomNav() {
               <span className={styles.iconWrap}>
                 {isActive && <span className={styles.indicator} />}
                 <tab.icon width={22} height={22} />
+                {showDot && <span className={styles.unreadDot} />}
               </span>
               <span className={styles.label}>{tab.label}</span>
             </button>

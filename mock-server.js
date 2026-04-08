@@ -291,6 +291,20 @@ const server = createServer(async (req, res) => {
       const likeIndex = story.likes.indexOf(userId)
       if (likeIndex === -1) {
         story.likes.push(userId)
+        // Create notification for story author (not self-like)
+        if (story.authorId !== userId) {
+          if (!db.notifications) db.notifications = []
+          db.notifications.push({
+            id: randomUUID(),
+            type: 'like_moment',
+            fromUserId: userId,
+            toUserId: story.authorId,
+            targetId: storyId,
+            targetTitle: story.title || '',
+            read: false,
+            createdAt: new Date().toISOString(),
+          })
+        }
       } else {
         story.likes.splice(likeIndex, 1)
       }
@@ -367,6 +381,31 @@ const server = createServer(async (req, res) => {
           ? { displayName: author.displayName, avatarUrl: author.avatarUrl }
           : { displayName: 'Unknown', avatarUrl: '' },
       })
+    }
+
+    // GET /notifications - get notifications for current user
+    if (method === 'GET' && path === '/notifications') {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+      const userId = getUserIdFromToken(authHeader.slice(7))
+      const db = readDb()
+      if (!db.notifications) db.notifications = []
+      const notis = db.notifications
+        .filter((n) => n.toUserId === userId)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 50)
+        .map((n) => {
+          const from = db.users.find((u) => u.id === n.fromUserId)
+          return {
+            ...n,
+            fromUser: from
+              ? { id: from.id, displayName: from.displayName, avatarUrl: from.avatarUrl }
+              : { id: '', displayName: 'Unknown', avatarUrl: '' },
+          }
+        })
+      return jsonResponse(res, 200, notis)
     }
 
     // GET /conversations - list all conversations for current user
