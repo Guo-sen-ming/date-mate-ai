@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice'
 import profileReducer from './slices/profileSlice'
 import storyReducer from './slices/momentSlice'
 import discoverReducer from './slices/discoverSlice'
+import chatReducer from './slices/chatSlice'
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     profile: profileReducer,
     story: storyReducer,
     discover: discoverReducer,
+    chat: chatReducer,
   },
 })
 

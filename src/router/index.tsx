@@ -15,6 +15,7 @@ import SettingsPage from '@/pages/profile/Settings'
 import MomentPage from '@/pages/moment/Moment'
 import MomentDetailPage from '@/pages/moment/MomentDetail'
 import MomentCreatePage from '@/pages/moment/MomentCreate'
+import ChatPage from '@/pages/messages/Chat'
 import UserProfilePage from '@/pages/profile/UserProfile'
 
 const router = createBrowserRouter([
@@ -43,6 +44,7 @@ const router = createBrowserRouter([
       { path: 'users/:id', element: <UserProfilePage /> },
       { path: 'moment/:id', element: <MomentDetailPage /> },
       { path: 'moment/create', element: <MomentCreatePage /> },
+      { path: 'messages/:id', element: <ChatPage /> },
     ],
   },
   {

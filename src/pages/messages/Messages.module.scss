@@ -1,0 +1,117 @@
+@use '../common.module.scss' as *;
+@use '../../styles/variables' as *;
+
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: $color-bg;
+}
+
+.header {
+  padding: $spacing-lg $spacing-md $spacing-sm;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.1s ease;
+  border-bottom: 1px solid $color-border;
+
+  &:active {
+    background: $color-bg-secondary;
+  }
+}
+
+.avatarWrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: $radius-sm;
+  object-fit: cover;
+}
+
+.badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid $color-bg;
+}
+
+.itemBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.time {
+  font-size: 12px;
+  color: $color-text-muted;
+  flex-shrink: 0;
+}
+
+.preview {
+  font-size: 14px;
+  color: $color-text-secondary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-3xl $spacing-md;
+  gap: $spacing-sm;
+  color: $color-text-secondary;
+  font-size: 15px;
+}
+
+.emptyHint {
+  font-size: 13px;
+  color: $color-text-muted;
+}

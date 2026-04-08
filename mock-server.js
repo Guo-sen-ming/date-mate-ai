@@ -1,6 +1,7 @@
 import { createServer } from 'node:http'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
+import { WebSocketServer } from 'ws'
 
 const PORT = 3001
 const DB_PATH = './db.json'
@@ -368,6 +369,91 @@ const server = createServer(async (req, res) => {
       })
     }
 
+    // GET /conversations - list all conversations for current user
+    if (method === 'GET' && path === '/conversations') {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+      const userId = getUserIdFromToken(authHeader.slice(7))
+      const db = readDb()
+      if (!db.conversations) db.conversations = []
+      const convs = db.conversations
+        .filter((c) => c.participants.includes(userId))
+        .map((c) => {
+          const otherId = c.participants.find((p) => p !== userId)
+          const other = db.users.find((u) => u.id === otherId)
+          const messages = (db.messages || []).filter((m) => m.conversationId === c.id)
+          const lastMsg = messages[messages.length - 1] || null
+          const unread = messages.filter((m) => m.senderId !== userId && !m.read).length
+          return {
+            ...c,
+            other: other ? { id: other.id, displayName: other.displayName, avatarUrl: other.avatarUrl } : null,
+            lastMessage: lastMsg,
+            unreadCount: unread,
+          }
+        })
+        .sort((a, b) => {
+          const aTime = a.lastMessage?.createdAt || a.createdAt
+          const bTime = b.lastMessage?.createdAt || b.createdAt
+          return new Date(bTime) - new Date(aTime)
+        })
+      return jsonResponse(res, 200, convs)
+    }
+
+    // GET /conversations/:id/messages - get messages in a conversation
+    if (method === 'GET' && /^\/conversations\/[^/]+\/messages$/.test(path)) {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+      const userId = getUserIdFromToken(authHeader.slice(7))
+      const convId = path.split('/')[2]
+      const db = readDb()
+      const conv = (db.conversations || []).find((c) => c.id === convId)
+      if (!conv || !conv.participants.includes(userId)) {
+        return jsonResponse(res, 403, { message: 'Forbidden' })
+      }
+      // Mark messages as read
+      if (!db.messages) db.messages = []
+      let changed = false
+      db.messages.forEach((m) => {
+        if (m.conversationId === convId && m.senderId !== userId && !m.read) {
+          m.read = true
+          changed = true
+        }
+      })
+      if (changed) writeDb(db)
+      const messages = db.messages.filter((m) => m.conversationId === convId)
+      return jsonResponse(res, 200, messages)
+    }
+
+    // POST /conversations - create or get existing conversation with a user
+    if (method === 'POST' && path === '/conversations') {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+      const userId = getUserIdFromToken(authHeader.slice(7))
+      const { targetUserId } = await parseBody(req)
+      const db = readDb()
+      if (!db.conversations) db.conversations = []
+      // Find existing conversation
+      let conv = db.conversations.find(
+        (c) => c.participants.includes(userId) && c.participants.includes(targetUserId),
+      )
+      if (!conv) {
+        conv = { id: randomUUID(), participants: [userId, targetUserId], createdAt: new Date().toISOString() }
+        db.conversations.push(conv)
+        writeDb(db)
+      }
+      const other = db.users.find((u) => u.id === targetUserId)
+      return jsonResponse(res, 200, {
+        ...conv,
+        other: other ? { id: other.id, displayName: other.displayName, avatarUrl: other.avatarUrl } : null,
+      })
+    }
+
     // GET /danmaku - list all danmaku messages
     if (method === 'GET' && path === '/danmaku') {
       const db = readDb()
@@ -428,3 +514,66 @@ server.listen(PORT, () => {
   console.log('    GET  /users/me         - Get current user (requires token)')
   console.log('    GET  /users            - List all users\n')
 })
+
+// WebSocket server for real-time chat
+const WS_PORT = 3002
+const wss = new WebSocketServer({ port: WS_PORT })
+
+// Map of userId -> WebSocket connection
+const clients = new Map()
+
+wss.on('connection', (ws, req) => {
+  let connectedUserId = null
+
+  ws.on('message', (data) => {
+    try {
+      const msg = JSON.parse(data.toString())
+
+      // Auth handshake: { type: 'auth', token }
+      if (msg.type === 'auth') {
+        const userId = getUserIdFromToken(msg.token)
+        if (userId) {
+          connectedUserId = userId
+          clients.set(userId, ws)
+          ws.send(JSON.stringify({ type: 'auth_ok', userId }))
+        }
+        return
+      }
+
+      // Send message: { type: 'message', conversationId, text }
+      if (msg.type === 'message' && connectedUserId) {
+        const db = readDb()
+        const conv = (db.conversations || []).find((c) => c.id === msg.conversationId)
+        if (!conv || !conv.participants.includes(connectedUserId)) return
+
+        const newMsg = {
+          id: randomUUID(),
+          conversationId: msg.conversationId,
+          senderId: connectedUserId,
+          text: msg.text,
+          read: false,
+          createdAt: new Date().toISOString(),
+        }
+        if (!db.messages) db.messages = []
+        db.messages.push(newMsg)
+        writeDb(db)
+
+        // Send to all participants
+        conv.participants.forEach((participantId) => {
+          const client = clients.get(participantId)
+          if (client && client.readyState === 1) {
+            client.send(JSON.stringify({ type: 'message', message: newMsg }))
+          }
+        })
+      }
+    } catch (e) {
+      console.error('WS message error:', e)
+    }
+  })
+
+  ws.on('close', () => {
+    if (connectedUserId) clients.delete(connectedUserId)
+  })
+})
+
+console.log(`  WebSocket server running at ws://localhost:${WS_PORT}\n`)

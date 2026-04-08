@@ -4,6 +4,7 @@ import { Badge, Skeleton, Button } from '@radix-ui/themes'
 import { ChevronLeftIcon, HeartFilledIcon, ChatBubbleIcon, HomeIcon, PersonIcon, BackpackIcon } from '@radix-ui/react-icons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { toggleLike } from '@/store/slices/discoverSlice'
+import { createOrGetConversation } from '@/store/slices/chatSlice'
 import { getAvatarUrl } from '@/lib/avatar'
 import apiClient from '@/lib/axios'
 import type { Story } from '@/store/slices/momentSlice'
@@ -175,7 +176,13 @@ export default function UserProfilePage() {
                 </button>
                 <button
                   className={`${styles.actionBtn} ${styles.messageBtn}`}
-                  onClick={() => navigate('/messages')}
+                  onClick={async () => {
+                    if (!id) return
+                    const result = await dispatch(createOrGetConversation(id))
+                    if (createOrGetConversation.fulfilled.match(result)) {
+                      navigate(`/messages/${result.payload.id}`)
+                    }
+                  }}
                   aria-label="Send message"
                 >
                   <ChatBubbleIcon width={20} height={20} />
