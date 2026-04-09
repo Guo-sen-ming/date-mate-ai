@@ -9,10 +9,6 @@ import { useNavigateToProfile } from '@/lib/navigation'
 import { getAvatarUrl } from '@/lib/avatar'
 import styles from './Chat.module.scss'
 
-function formatTime(dateStr: string): string {
-  return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-}
-
 const FIVE_MINUTES = 5 * 60 * 1000
 
 function formatMsgTime(dateStr: string): string {

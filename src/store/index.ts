@@ -4,6 +4,7 @@ import profileReducer from './slices/profileSlice'
 import storyReducer from './slices/momentSlice'
 import discoverReducer from './slices/discoverSlice'
 import chatReducer from './slices/chatSlice'
+import matchesReducer from './slices/matchesSlice'
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     story: storyReducer,
     discover: discoverReducer,
     chat: chatReducer,
+    matches: matchesReducer,
   },
 })
 
