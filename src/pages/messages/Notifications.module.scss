@@ -107,6 +107,21 @@
   &.type_comment_moment {
     background: #3b82f6;
   }
+
+  &.type_guestbook {
+    background: #8b5cf6;
+  }
+}
+
+.unreadDot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 2px solid $color-bg;
 }
 
 .body {

@@ -5,6 +5,7 @@ import storyReducer from './slices/momentSlice'
 import discoverReducer from './slices/discoverSlice'
 import chatReducer from './slices/chatSlice'
 import matchesReducer from './slices/matchesSlice'
+import notificationsReducer from './slices/notificationsSlice'
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     discover: discoverReducer,
     chat: chatReducer,
     matches: matchesReducer,
+    notifications: notificationsReducer,
   },
 })
 

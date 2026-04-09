@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { receiveMessage } from '@/store/slices/chatSlice'
+import { receiveNotification } from '@/store/slices/notificationsSlice'
 
 const WS_URL = 'ws://localhost:3002'
 
@@ -33,6 +34,8 @@ export function useChatSocket() {
         const data = JSON.parse(e.data)
         if (data.type === 'message') {
           dispatch(receiveMessage(data.message))
+        } else if (data.type === 'notification') {
+          dispatch(receiveNotification(data.notification))
         }
       } catch {
         // ignore parse errors

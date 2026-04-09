@@ -383,8 +383,8 @@ const server = createServer(async (req, res) => {
       })
     }
 
-    // GET /notifications - get notifications for current user
-    if (method === 'GET' && path === '/notifications') {
+    // GET /notifications or /api/notifications - get notifications for current user
+    if (method === 'GET' && (path === '/notifications' || path === '/api/notifications')) {
       const authHeader = req.headers.authorization
       if (!authHeader?.startsWith('Bearer ')) {
         return jsonResponse(res, 401, { message: 'Unauthorized' })
@@ -406,6 +406,31 @@ const server = createServer(async (req, res) => {
           }
         })
       return jsonResponse(res, 200, notis)
+    }
+
+    // PATCH /notifications/:id/read or /api/notifications/:id/read - mark notification as read
+    if (method === 'PATCH' && /^(\/api)?\/notifications\/[^/]+\/read$/.test(path)) {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+      const userId = getUserIdFromToken(authHeader.slice(7))
+      const notificationId = path.split('/')[2]
+      const db = readDb()
+      if (!db.notifications) db.notifications = []
+      const notification = db.notifications.find((n) => n.id === notificationId && n.toUserId === userId)
+      if (!notification) {
+        return jsonResponse(res, 404, { message: 'Notification not found' })
+      }
+      notification.read = true
+      writeDb(db)
+      const fromUser = db.users.find((u) => u.id === notification.fromUserId)
+      return jsonResponse(res, 200, {
+        ...notification,
+        fromUser: fromUser
+          ? { id: fromUser.id, displayName: fromUser.displayName, avatarUrl: fromUser.avatarUrl }
+          : { id: '', displayName: 'Unknown', avatarUrl: '' },
+      })
     }
 
     // GET /conversations - list all conversations for current user
@@ -537,6 +562,135 @@ const server = createServer(async (req, res) => {
       })
     }
 
+    // GET /matches - get matches for current user
+    if (method === 'GET' && path === '/matches') {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+      const userId = getUserIdFromToken(authHeader.slice(7))
+      const db = readDb()
+      // Return mock matches - users who liked each other
+      const matches = db.users
+        .filter((u) => u.id !== userId)
+        .slice(0, 5)
+        .map((u) => ({
+          id: randomUUID(),
+          userId: u.id,
+          displayName: u.displayName,
+          avatarUrl: u.avatarUrl,
+          bio: u.bio || '',
+          location: u.location || '',
+          matchedAt: new Date(Date.now() - Math.random() * 86400000 * 30).toISOString(),
+          lastActive: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+        }))
+      return jsonResponse(res, 200, matches)
+    }
+
+    // GET /users/:id/guestbook - get guestbook entries for a user
+    if (method === 'GET' && /^\/users\/[^/]+\/guestbook$/.test(path)) {
+      const userId = path.split('/')[2]
+      const db = readDb()
+      if (!db.guestbook) db.guestbook = []
+      const entries = db.guestbook
+        .filter((g) => g.toUserId === userId)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .map((g) => {
+          const fromUser = db.users.find((u) => u.id === g.fromUserId)
+          return {
+            ...g,
+            fromUser: fromUser
+              ? { id: fromUser.id, displayName: fromUser.displayName, avatarUrl: fromUser.avatarUrl }
+              : { id: '', displayName: 'Unknown', avatarUrl: '' },
+          }
+        })
+      return jsonResponse(res, 200, entries)
+    }
+
+    // POST /users/:id/guestbook - add a guestbook entry
+    if (method === 'POST' && /^\/users\/[^/]+\/guestbook$/.test(path)) {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+      const fromUserId = getUserIdFromToken(authHeader.slice(7))
+      const toUserId = path.split('/')[2]
+      const { content } = await parseBody(req)
+      if (!content || !content.trim()) {
+        return jsonResponse(res, 400, { message: 'Content is required' })
+      }
+      const db = readDb()
+      if (!db.guestbook) db.guestbook = []
+      const newEntry = {
+        id: randomUUID(),
+        fromUserId,
+        toUserId,
+        content: content.trim(),
+        createdAt: new Date().toISOString(),
+      }
+      db.guestbook.push(newEntry)
+      // Create notification for the user receiving the guestbook message
+      if (!db.notifications) db.notifications = []
+      const newNotification = {
+        id: randomUUID(),
+        type: 'guestbook',
+        fromUserId,
+        toUserId,
+        targetId: newEntry.id,
+        targetTitle: content.trim().slice(0, 50),
+        read: false,
+        createdAt: new Date().toISOString(),
+      }
+      db.notifications.push(newNotification)
+      writeDb(db)
+
+      // Send WebSocket notification to the target user
+      const targetClient = clients.get(toUserId)
+      if (targetClient && targetClient.readyState === 1) {
+        const fromUser = db.users.find((u) => u.id === fromUserId)
+        targetClient.send(JSON.stringify({
+          type: 'notification',
+          notification: {
+            ...newNotification,
+            fromUser: fromUser
+              ? { id: fromUser.id, displayName: fromUser.displayName, avatarUrl: fromUser.avatarUrl }
+              : { id: '', displayName: 'Unknown', avatarUrl: '' },
+          },
+        }))
+      }
+      const fromUser = db.users.find((u) => u.id === fromUserId)
+      return jsonResponse(res, 201, {
+        ...newEntry,
+        fromUser: fromUser
+          ? { id: fromUser.id, displayName: fromUser.displayName, avatarUrl: fromUser.avatarUrl }
+          : { id: '', displayName: 'Unknown', avatarUrl: '' },
+      })
+    }
+
+    // DELETE /users/:id/guestbook/:entryId - delete a guestbook entry
+    if (method === 'DELETE' && /^\/users\/[^/]+\/guestbook\/[^/]+$/.test(path)) {
+      const authHeader = req.headers.authorization
+      if (!authHeader?.startsWith('Bearer ')) {
+        return jsonResponse(res, 401, { message: 'Unauthorized' })
+      }
+      const currentUserId = getUserIdFromToken(authHeader.slice(7))
+      const parts = path.split('/')
+      const userId = parts[2]
+      const entryId = parts[4]
+      if (currentUserId !== userId) {
+        return jsonResponse(res, 403, { message: 'Cannot delete messages from other users' })
+      }
+      const db = readDb()
+      if (!db.guestbook) db.guestbook = []
+      const entryIndex = db.guestbook.findIndex((e) => e.id === entryId && e.toUserId === userId)
+      if (entryIndex === -1) {
+        return jsonResponse(res, 404, { message: 'Message not found' })
+      }
+      db.guestbook.splice(entryIndex, 1)
+      writeDb(db)
+      return jsonResponse(res, 200, { message: 'Message deleted successfully' })
+    }
+
     // Fallback - 404
     return jsonResponse(res, 404, { message: 'Not found' })
   } catch (err) {
@@ -548,10 +702,19 @@ const server = createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`\n  Mock API server running at http://localhost:${PORT}\n`)
   console.log('  Endpoints:')
-  console.log('    POST /auth/login       - Login with email & password')
-  console.log('    POST /auth/register    - Register new user')
-  console.log('    GET  /users/me         - Get current user (requires token)')
-  console.log('    GET  /users            - List all users\n')
+  console.log('    POST /auth/login              - Login with email & password')
+  console.log('    POST /auth/register           - Register new user')
+  console.log('    GET  /users/me                - Get current user (requires token)')
+  console.log('    GET  /users                   - List all users')
+  console.log('    GET  /users/:id               - Get user profile')
+  console.log('    GET  /users/:id/stories       - Get user stories')
+  console.log('    GET  /users/:id/guestbook     - Get user guestbook')
+  console.log('    POST /users/:id/guestbook     - Add guestbook entry')
+  console.log('    GET  /matches                 - Get user matches')
+  console.log('    GET  /stories                 - List all stories')
+  console.log('    POST /stories                 - Create new story')
+  console.log('    GET  /conversations           - List conversations')
+  console.log('    GET  /notifications           - Get notifications\n')
 })
 
 // WebSocket server for real-time chat

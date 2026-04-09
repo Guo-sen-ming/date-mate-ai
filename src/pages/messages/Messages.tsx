@@ -4,6 +4,7 @@ import { Skeleton } from '@radix-ui/themes'
 import { BellIcon } from '@radix-ui/react-icons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { fetchConversations } from '@/store/slices/chatSlice'
+import { fetchNotifications } from '@/store/slices/notificationsSlice'
 import { useChatSocket } from '@/lib/useChat'
 import { getAvatarUrl } from '@/lib/avatar'
 import styles from './Messages.module.scss'
@@ -30,13 +31,16 @@ export default function MessagesPage() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { conversations, loading } = useAppSelector((s) => s.chat)
+  const notifications = useAppSelector((s) => s.notifications.items)
   useChatSocket()
 
   useEffect(() => {
     dispatch(fetchConversations())
+    dispatch(fetchNotifications())
   }, [dispatch])
 
   const totalUnread = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0)
+  const unreadNotifications = notifications.filter(n => !n.read).length
 
   return (
     <div className={styles.page}>
@@ -50,6 +54,9 @@ export default function MessagesPage() {
         </div>
         <button className={styles.bellBtn} onClick={() => navigate('/notifications')} aria-label="Notifications">
           <BellIcon width={22} height={22} />
+          {unreadNotifications > 0 && (
+            <span className={styles.bellBadge}>{unreadNotifications > 99 ? '99+' : unreadNotifications}</span>
+          )}
         </button>
       </div>
 

@@ -23,13 +23,16 @@ export default function BottomNav() {
   const totalUnread = useAppSelector((s) =>
     s.chat.conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0),
   )
+  const unreadNotifications = useAppSelector((s) =>
+    s.notifications.items.filter((n) => !n.read).length,
+  )
 
   return (
     <nav className={styles.nav}>
       <div className={styles.inner}>
         {tabs.map((tab) => {
           const isActive = location.pathname === tab.path
-          const showDot = tab.path === '/messages' && totalUnread > 0
+          const showDot = (tab.path === '/messages' && totalUnread > 0) || (tab.path === '/messages' && unreadNotifications > 0)
           return (
             <button
               key={tab.path}

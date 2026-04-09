@@ -65,6 +65,28 @@
   }
 }
 
+.editBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  color: $color-text;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--accent-9);
+  }
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
 /* Hero banner */
 .hero {
   width: 100%;
@@ -122,14 +144,44 @@
 
 /* Body */
 .body {
-  padding: $spacing-md $spacing-lg $spacing-lg;
+  padding: $spacing-xl $spacing-lg $spacing-xl;
 }
 
 .nameRow {
   display: flex;
   align-items: center;
   gap: $spacing-sm;
-  margin-bottom: 6px;
+  margin-bottom: $spacing-sm;
+  justify-content: space-between;
+}
+
+.nameGroup {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.editBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s ease;
+  color: $color-text-muted;
+
+  &:hover {
+    background: $color-bg;
+    color: var(--accent-9);
+  }
+
+  &:active {
+    opacity: 0.6;
+  }
 }
 
 .name {
@@ -302,4 +354,248 @@
   padding: $spacing-3xl $spacing-md;
   color: $color-text-secondary;
   font-size: 14px;
+}
+
+/* Content section with tabs */
+.contentSection {
+  border-top: 1px solid $color-border;
+  padding: $spacing-md $spacing-lg;
+  padding-bottom: $spacing-3xl;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
+}
+
+.tab {
+  padding: $spacing-sm 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: $color-text-secondary;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    color: $color-text;
+  }
+
+  &.femaleTabActive{
+    color: #ec4899;
+    border-bottom-color: #ec4899;
+  }
+
+  &.maleTabActive{
+    color: #3b82f6;
+    border-bottom-color: #3b82f6;
+  }
+}
+
+/* Empty state */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl * 2 $spacing-lg;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: $spacing-md;
+}
+
+.emptyTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: $color-text;
+  margin-bottom: $spacing-sm;
+}
+
+.emptyHint {
+  font-size: 13px;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}
+
+/* Empty profile hint */
+.emptyProfileHint {
+  margin: $spacing-md $spacing-lg;
+  padding: $spacing-md;
+  background: $color-bg-secondary;
+  border-radius: $radius-md;
+  text-align: center;
+
+  p {
+    font-size: 13px;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+/* Guestbook */
+.guestbookInput {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg-secondary;
+  border-radius: $radius-md;
+}
+
+.guestbookTextarea {
+  width: 100%;
+  resize: none;
+}
+
+/* Override Radix UI TextArea styles */
+.guestbookInput :global(.rt-TextareaRoot) {
+  --accent-12: var(--user-gender-color, var(--accent-12)) !important;
+}
+
+.guestbookFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: $spacing-sm;
+}
+
+.guestbookSubmit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: $spacing-sm $spacing-md;
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  background: var(--user-gender-color, var(--accent-9));
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover:not(:disabled) {
+    background: var(--user-gender-color, var(--accent-10));
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.femaleButton {
+  background: #ec4899 !important;
+}
+
+.femaleButton:hover:not(:disabled) {
+  background: #db2777 !important;
+}
+
+.maleButton {
+  background: #3b82f6 !important;
+}
+
+.maleButton:hover:not(:disabled) {
+  background: #2563eb !important;
+}
+
+.charCount {
+  font-size: 12px;
+  color: $color-text-muted;
+  transition: all 0.2s ease;
+}
+
+.charCountWarning {
+  color: #f59e0b;
+}
+
+.guestbookList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.guestbookItem {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg-secondary;
+  border-radius: $radius-md;
+}
+
+.guestbookAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-sm;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.guestbookContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.guestbookHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.guestbookName {
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.guestbookTime {
+  font-size: 12px;
+  color: $color-text-muted;
+}
+
+.guestbookHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.guestbookDelete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: $color-text-muted;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    color: #ef4444;
+  }
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.guestbookText {
+  font-size: 14px;
+  color: $color-text-secondary;
+  line-height: 1.5;
+  margin: 0;
+  word-break: break-word;
 }

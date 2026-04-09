@@ -3,10 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { IconButton } from '@radix-ui/themes'
 import { ChevronLeftIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { fetchMessages, markConvRead, setActiveConv } from '@/store/slices/chatSlice'
+import { fetchConversations, fetchMessages, markConvRead, setActiveConv } from '@/store/slices/chatSlice'
 import { useChatSocket } from '@/lib/useChat'
 import { useNavigateToProfile } from '@/lib/navigation'
 import { getAvatarUrl } from '@/lib/avatar'
+import PageLoading from '@/components/PageLoading'
 import styles from './Chat.module.scss'
 
 const FIVE_MINUTES = 5 * 60 * 1000
@@ -54,14 +55,20 @@ export default function ChatPage() {
 
   const [text, setText] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
+  // Wait for both auth user and conversation to be loaded
+  const initialLoading = !currentUserId || !conv?.other
 
   useEffect(() => {
     if (!convId) return
     dispatch(setActiveConv(convId))
     dispatch(fetchMessages(convId))
     dispatch(markConvRead(convId))
+    // If conversation not in store (e.g., page refresh), fetch conversations
+    if (!conv) {
+      dispatch(fetchConversations())
+    }
     return () => { dispatch(setActiveConv(null)) }
-  }, [convId, dispatch])
+  }, [convId, dispatch, conv])
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -84,11 +91,13 @@ export default function ChatPage() {
   return (
     <div className={styles.page}>
       {/* Header */}
+      <PageLoading visible={initialLoading} />
+
       <div className={styles.header}>
         <button className={styles.backBtn} onClick={() => navigate('/messages')} aria-label="Back">
           <ChevronLeftIcon width={24} height={24} />
         </button>
-        {conv?.other && (
+        {!initialLoading && conv?.other && (
           <img
             src={getAvatarUrl(conv.other.avatarUrl, '')}
             alt={conv.other.displayName}
@@ -97,7 +106,9 @@ export default function ChatPage() {
             role="button"
           />
         )}
-        <span className={styles.headerName}>{conv?.other?.displayName ?? 'Chat'}</span>
+        <span className={styles.headerName}>
+          {initialLoading ? '' : conv?.other?.displayName ?? 'Chat'}
+        </span>
       </div>
 
       {/* Messages */}
