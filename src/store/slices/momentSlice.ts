@@ -104,7 +104,7 @@ export const addComment = createAsyncThunk(
 
 export const createStory = createAsyncThunk(
   'story/create',
-  async (data: { title: string; content: string; images: string[]; location: string }, { rejectWithValue }) => {
+  async (data: { title: string; content: string; images: string[]; video?: string | null; location: string }, { rejectWithValue }) => {
     try {
       const response = await apiClient.post('/stories', data)
       return response.data

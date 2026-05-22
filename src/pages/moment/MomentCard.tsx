@@ -6,6 +6,7 @@ import { toggleLike } from '@/store/slices/momentSlice'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { getAvatarUrl } from '@/lib/avatar'
 import ImagePreview from '@/components/ImagePreview'
+import VideoPlayer from '@/components/VideoPlayer'
 import styles from './MomentCard.module.scss'
 import { useNavigateToProfile } from '@/lib/navigation'
 
@@ -117,6 +118,11 @@ export default function StoryCard({ story }: Props) {
       <div className={styles.cardBody}>
         <h3 className={styles.title}>{story.title}</h3>
         <p className={styles.content}>{story.content}</p>
+        {story.video && (
+          <div className={styles.videoSection} onClick={(e) => e.stopPropagation()}>
+            <VideoPlayer src={story.video} aspectRatio="3 / 4" />
+          </div>
+        )}
         {renderPhotoGrid()}
       </div>
 

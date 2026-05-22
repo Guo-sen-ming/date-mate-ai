@@ -74,6 +74,12 @@
   overflow: hidden;
 }
 
+.videoSection {
+  margin-bottom: $spacing-sm;
+  border-radius: $radius-sm;
+  overflow: hidden;
+}
+
 // Photo grid: 1 left + 2 right stacked
 .photoGrid {
   display: grid;

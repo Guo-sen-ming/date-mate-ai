@@ -206,7 +206,7 @@ const server = createServer(async (req, res) => {
         return jsonResponse(res, 401, { message: 'Unauthorized' })
       }
       const userId = getUserIdFromToken(authHeader.slice(7))
-      const { title, content, images, location } = await parseBody(req)
+      const { title, content, images, video, location } = await parseBody(req)
       const db = readDb()
       const newStory = {
         id: randomUUID(),
@@ -214,7 +214,7 @@ const server = createServer(async (req, res) => {
         title: title || '',
         content: content || '',
         images: images || [],
-        video: null,
+        video: video || null,
         location: location || null,
         likes: [],
         comments: [],

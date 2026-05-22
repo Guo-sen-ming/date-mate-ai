@@ -9,6 +9,7 @@ export interface DiscoverUser {
   bio: string
   gender: string
   location: string
+  occupation: string
 }
 
 export interface Danmaku {

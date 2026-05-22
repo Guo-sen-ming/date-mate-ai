@@ -15,6 +15,7 @@ import {
   deleteStory,
 } from '@/store/slices/momentSlice'
 import { getAvatarUrl } from '@/lib/avatar'
+import VideoPlayer from '@/components/VideoPlayer'
 import styles from './MomentDetail.module.scss'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -133,6 +134,13 @@ export default function MomentDetail() {
             </SwiperSlide>
           ))}
         </Swiper>
+      )}
+
+      {/* Video player */}
+      {story.video && (
+        <div className={styles.videoSection}>
+          <VideoPlayer src={story.video} aspectRatio="3 / 4" />
+        </div>
       )}
 
       {/* Content */}

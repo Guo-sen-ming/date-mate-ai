@@ -1,0 +1,41 @@
+@use '../styles/variables' as *;
+
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  background: $color-bg-secondary;
+  border: 1px solid $color-border;
+  border-radius: 999px;
+  padding: 0 $spacing-md;
+  height: 44px;
+  transition: border-color 0.2s ease;
+
+  &:focus-within {
+    border-color: $color-primary;
+  }
+}
+
+.icon {
+  color: $color-text-muted;
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: $color-text;
+  min-width: 0;
+
+  &::placeholder {
+    color: $color-text-muted;
+  }
+
+  // Remove default search input styling
+  &::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
+}

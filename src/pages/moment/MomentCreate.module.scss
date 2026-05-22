@@ -63,26 +63,64 @@
   margin-bottom: $spacing-sm;
 }
 
-.required {
-  color: $color-error;
-  margin-left: 2px;
+.mediaHint {
+  font-size: 12px;
+  color: $color-text-muted;
+  margin-bottom: $spacing-sm;
 }
 
-// Image grid
-.imageGrid {
+// Initial upload options - compact horizontal layout
+.uploadOptions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-sm;
+}
+
+.uploadOptionBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-lg $spacing-md;
+  border: 2px dashed $color-border;
+  border-radius: $radius-sm;
+  color: $color-text-muted;
+  cursor: pointer;
+  min-height: 100px;
+  transition: border-color 0.2s, color 0.2s;
+
+  &:active {
+    border-color: $color-text-secondary;
+    color: $color-text-secondary;
+  }
+}
+
+.uploadOptionText {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.uploadOptionSub {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+// Media grid - 3:4 aspect ratio items
+.mediaGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: $spacing-sm;
 }
 
-.imageItem {
+.mediaItem {
   position: relative;
-  aspect-ratio: 1;
+  aspect-ratio: 3 / 4;
   border-radius: $radius-sm;
   overflow: hidden;
 }
 
-.imageThumb {
+.mediaThumb {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -114,19 +152,19 @@
   }
 }
 
-.addImageBtn {
+.addMediaBtn {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: $spacing-xs;
-  aspect-ratio: 1;
+  aspect-ratio: 3 / 4;
   border: 2px dashed $color-border;
   border-radius: $radius-sm;
   color: $color-text-muted;
   cursor: pointer;
   min-height: 48px;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, color 0.2s;
 
   &:active {
     border-color: $color-text-secondary;
@@ -140,6 +178,16 @@
 
 .hiddenInput {
   display: none;
+}
+
+// Video wrapper - 3:4 ratio
+.videoWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 3 / 4;
+  border-radius: $radius-sm;
+  overflow: hidden;
 }
 
 // Gradient progress bar for submit

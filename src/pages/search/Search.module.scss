@@ -1,0 +1,189 @@
+@use '../../styles/variables' as *;
+
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: $color-bg;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  position: sticky;
+  top: 0;
+  background: $color-bg;
+  z-index: 10;
+}
+
+.searchWrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.cancelBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  color: $color-primary;
+  padding: $spacing-sm;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+/* Loading animation - pulse rings */
+.loadingWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-3xl 0;
+  gap: $spacing-md;
+}
+
+.pulseRing {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+
+.ring1,
+.ring2,
+.ring3 {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid $color-primary;
+  opacity: 0;
+  animation: pulseOut 1.8s ease-out infinite;
+}
+
+.ring2 {
+  animation-delay: 0.4s;
+}
+
+.ring3 {
+  animation-delay: 0.8s;
+}
+
+@keyframes pulseOut {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+.loadingText {
+  font-size: 14px;
+  color: $color-text-muted;
+  animation: fadeInOut 1.5s ease-in-out infinite;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* Results */
+.results {
+  padding: 0 $spacing-md;
+}
+
+.section {
+  margin-bottom: $spacing-lg;
+}
+
+.sectionTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: $spacing-sm;
+  padding: 0 $spacing-sm;
+}
+
+.resultItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-sm;
+  border-radius: $radius-md;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.1s ease;
+
+  &:active {
+    background: $color-bg-secondary;
+  }
+}
+
+.resultAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: $radius-sm;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.resultInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.resultName {
+  font-size: 15px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.resultSub {
+  font-size: 13px;
+  color: $color-text-muted;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Empty */
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-3xl $spacing-md;
+}
+
+.emptyText {
+  font-size: 15px;
+  color: $color-text-muted;
+}
+
+/* Initial */
+.initial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-3xl $spacing-md;
+}
+
+.initialText {
+  font-size: 15px;
+  color: $color-text-muted;
+}

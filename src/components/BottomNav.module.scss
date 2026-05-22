@@ -85,10 +85,10 @@
 
 .unreadDot {
   position: absolute;
-  top: 0;
-  right: 2px;
-  width: 8px;
-  height: 8px;
+  top: -2px;
+  right: 0;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #ef4444;
   border: 2px solid $color-bg;

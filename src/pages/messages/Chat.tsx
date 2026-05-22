@@ -94,7 +94,7 @@ export default function ChatPage() {
       <PageLoading visible={initialLoading} />
 
       <div className={styles.header}>
-        <button className={styles.backBtn} onClick={() => navigate('/messages')} aria-label="Back">
+        <button className={styles.backBtn} onClick={() => navigate(-1)} aria-label="Back">
           <ChevronLeftIcon width={24} height={24} />
         </button>
         {!initialLoading && conv?.other && (

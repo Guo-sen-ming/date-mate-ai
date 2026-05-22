@@ -10,36 +10,30 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: $spacing-lg $spacing-md $spacing-md;
+  gap: $spacing-sm;
+  padding: $spacing-md;
   background: $color-bg-secondary;
 }
 
-.headerLeft {
+.fakeSearch {
+  flex: 1;
   display: flex;
   align-items: center;
   gap: $spacing-sm;
-}
-
-.title {
-  font-size: 28px;
-  font-weight: 800;
-  color: $color-text;
-  letter-spacing: -0.5px;
-}
-
-.totalBadge {
-  background: #ef4444;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  min-width: 22px;
-  height: 22px;
+  height: 44px;
+  padding: 0 $spacing-md;
+  background: $color-bg;
+  border: 1px solid $color-border;
   border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 6px;
+  cursor: pointer;
+  color: $color-text-muted;
+  font-size: 15px;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: $shadow-sm;
+
+  &:active {
+    background: $color-bg-secondary;
+  }
 }
 
 .bellBtn {
@@ -193,6 +187,13 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+/* Searching */
+.searchingWrap {
+  display: flex;
+  justify-content: center;
+  padding: $spacing-lg 0;
 }
 
 /* Empty */
